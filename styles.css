@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+}
+
+.letterbox-vert {
+  width: 100%;
+}
+
+.letterbox-horiz {
+  height: 100%;
+}
