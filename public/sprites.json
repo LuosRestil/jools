@@ -1,515 +1,515 @@
 {
-  "ballBlue.png": {
+  "ballBlue": {
     "x": 108,
     "y": 676,
     "width": 44,
     "height": 44
   },
-  "ballGrey.png": {
+  "ballGrey": {
     "x": 152,
     "y": 676,
     "width": 44,
     "height": 44
   },
-  "buttonDefault.png": {
+  "buttonDefault": {
     "x": 0,
     "y": 0,
     "width": 380,
     "height": 98
   },
-  "buttonDefault_bottom.png": {
+  "buttonDefault_bottom": {
     "x": 704,
     "y": 144,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_bottomleft.png": {
+  "buttonDefault_bottomleft": {
     "x": 696,
     "y": 120,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_bottomright.png": {
+  "buttonDefault_bottomright": {
     "x": 696,
     "y": 96,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_left.png": {
+  "buttonDefault_left": {
     "x": 696,
     "y": 592,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_mid.png": {
+  "buttonDefault_mid": {
     "x": 696,
     "y": 568,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_right.png": {
+  "buttonDefault_right": {
     "x": 696,
     "y": 544,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_top.png": {
+  "buttonDefault_top": {
     "x": 672,
     "y": 592,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_topleft.png": {
+  "buttonDefault_topleft": {
     "x": 704,
     "y": 168,
     "width": 24,
     "height": 24
   },
-  "buttonDefault_topright.png": {
+  "buttonDefault_topright": {
     "x": 672,
     "y": 544,
     "width": 24,
     "height": 24
   },
-  "buttonSelected.png": {
+  "buttonSelected": {
     "x": 0,
     "y": 98,
     "width": 380,
     "height": 98
   },
-  "buttonSelected_bottom.png": {
+  "buttonSelected_bottom": {
     "x": 600,
     "y": 692,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_bottomleft.png": {
+  "buttonSelected_bottomleft": {
     "x": 616,
     "y": 160,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_bottomright.png": {
+  "buttonSelected_bottomright": {
     "x": 592,
     "y": 160,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_left.png": {
+  "buttonSelected_left": {
     "x": 568,
     "y": 628,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_mid.png": {
+  "buttonSelected_mid": {
     "x": 544,
     "y": 628,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_right.png": {
+  "buttonSelected_right": {
     "x": 520,
     "y": 242,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_top.png": {
+  "buttonSelected_top": {
     "x": 496,
     "y": 242,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_topleft.png": {
+  "buttonSelected_topleft": {
     "x": 672,
     "y": 568,
     "width": 24,
     "height": 24
   },
-  "buttonSelected_topright.png": {
+  "buttonSelected_topright": {
     "x": 624,
     "y": 692,
     "width": 24,
     "height": 24
   },
-  "element_blue_diamond.png": {
+  "element_blue_diamond": {
     "x": 256,
     "y": 380,
     "width": 96,
     "height": 96
   },
-  "element_blue_diamond_glossy.png": {
+  "element_blue_diamond_glossy": {
     "x": 256,
     "y": 476,
     "width": 96,
     "height": 96
   },
-  "element_blue_polygon.png": {
+  "element_blue_polygon": {
     "x": 380,
     "y": 92,
     "width": 96,
     "height": 92
   },
-  "element_blue_polygon_glossy.png": {
+  "element_blue_polygon_glossy": {
     "x": 256,
     "y": 288,
     "width": 96,
     "height": 92
   },
-  "element_blue_rectangle.png": {
+  "element_blue_rectangle": {
     "x": 0,
     "y": 356,
     "width": 128,
     "height": 64
   },
-  "element_blue_rectangle_glossy.png": {
+  "element_blue_rectangle_glossy": {
     "x": 0,
     "y": 420,
     "width": 128,
     "height": 64
   },
-  "element_blue_square.png": {
+  "element_blue_square": {
     "x": 640,
     "y": 416,
     "width": 64,
     "height": 64
   },
-  "element_blue_square_glossy.png": {
+  "element_blue_square_glossy": {
     "x": 640,
     "y": 480,
     "width": 64,
     "height": 64
   },
-  "element_green_diamond.png": {
+  "element_green_diamond": {
     "x": 476,
     "y": 0,
     "width": 96,
     "height": 96
   },
-  "element_green_diamond_glossy.png": {
+  "element_green_diamond_glossy": {
     "x": 572,
     "y": 0,
     "width": 96,
     "height": 96
   },
-  "element_green_polygon.png": {
+  "element_green_polygon": {
     "x": 544,
     "y": 188,
     "width": 96,
     "height": 92
   },
-  "element_green_polygon_glossy.png": {
+  "element_green_polygon_glossy": {
     "x": 544,
     "y": 472,
     "width": 96,
     "height": 92
   },
-  "element_green_rectangle.png": {
+  "element_green_rectangle": {
     "x": 0,
     "y": 484,
     "width": 128,
     "height": 64
   },
-  "element_green_rectangle_glossy.png": {
+  "element_green_rectangle_glossy": {
     "x": 0,
     "y": 548,
     "width": 128,
     "height": 64
   },
-  "element_green_square.png": {
+  "element_green_square": {
     "x": 640,
     "y": 160,
     "width": 64,
     "height": 64
   },
-  "element_green_square_glossy.png": {
+  "element_green_square_glossy": {
     "x": 608,
     "y": 564,
     "width": 64,
     "height": 64
   },
-  "element_grey_diamond.png": {
+  "element_grey_diamond": {
     "x": 352,
     "y": 480,
     "width": 96,
     "height": 96
   },
-  "element_grey_diamond_glossy.png": {
+  "element_grey_diamond_glossy": {
     "x": 448,
     "y": 560,
     "width": 96,
     "height": 96
   },
-  "element_grey_polygon.png": {
+  "element_grey_polygon": {
     "x": 208,
     "y": 196,
     "width": 96,
     "height": 92
   },
-  "element_grey_polygon_glossy.png": {
+  "element_grey_polygon_glossy": {
     "x": 496,
     "y": 96,
     "width": 96,
     "height": 92
   },
-  "element_grey_rectangle.png": {
+  "element_grey_rectangle": {
     "x": 0,
     "y": 612,
     "width": 128,
     "height": 64
   },
-  "element_grey_rectangle_glossy.png": {
+  "element_grey_rectangle_glossy": {
     "x": 0,
     "y": 292,
     "width": 128,
     "height": 64
   },
-  "element_grey_square.png": {
+  "element_grey_square": {
     "x": 320,
     "y": 668,
     "width": 64,
     "height": 64
   },
-  "element_grey_square_glossy.png": {
+  "element_grey_square_glossy": {
     "x": 640,
     "y": 352,
     "width": 64,
     "height": 64
   },
-  "element_purple_cube_glossy.png": {
+  "element_purple_cube_glossy": {
     "x": 256,
     "y": 668,
     "width": 64,
     "height": 64
   },
-  "element_purple_diamond.png": {
+  "element_purple_diamond": {
     "x": 544,
     "y": 376,
     "width": 96,
     "height": 96
   },
-  "element_purple_diamond_glossy.png": {
+  "element_purple_diamond_glossy": {
     "x": 544,
     "y": 280,
     "width": 96,
     "height": 96
   },
-  "element_purple_polygon.png": {
+  "element_purple_polygon": {
     "x": 380,
     "y": 0,
     "width": 96,
     "height": 92
   },
-  "element_purple_polygon_glossy.png": {
+  "element_purple_polygon_glossy": {
     "x": 352,
     "y": 576,
     "width": 96,
     "height": 92
   },
-  "element_purple_rectangle.png": {
+  "element_purple_rectangle": {
     "x": 128,
     "y": 612,
     "width": 128,
     "height": 64
   },
-  "element_purple_rectangle_glossy.png": {
+  "element_purple_rectangle_glossy": {
     "x": 128,
     "y": 356,
     "width": 128,
     "height": 64
   },
-  "element_purple_square.png": {
+  "element_purple_square": {
     "x": 600,
     "y": 628,
     "width": 64,
     "height": 64
   },
-  "element_red_diamond.png": {
+  "element_red_diamond": {
     "x": 448,
     "y": 464,
     "width": 96,
     "height": 96
   },
-  "element_red_diamond_glossy.png": {
+  "element_red_diamond_glossy": {
     "x": 448,
     "y": 368,
     "width": 96,
     "height": 96
   },
-  "element_red_polygon.png": {
+  "element_red_polygon": {
     "x": 448,
     "y": 276,
     "width": 96,
     "height": 92
   },
-  "element_red_polygon_glossy.png": {
+  "element_red_polygon_glossy": {
     "x": 400,
     "y": 184,
     "width": 96,
     "height": 92
   },
-  "element_red_rectangle.png": {
+  "element_red_rectangle": {
     "x": 128,
     "y": 420,
     "width": 128,
     "height": 64
   },
-  "element_red_rectangle_glossy.png": {
+  "element_red_rectangle_glossy": {
     "x": 128,
     "y": 484,
     "width": 128,
     "height": 64
   },
-  "element_red_square.png": {
+  "element_red_square": {
     "x": 592,
     "y": 96,
     "width": 64,
     "height": 64
   },
-  "element_red_square_glossy.png": {
+  "element_red_square_glossy": {
     "x": 544,
     "y": 564,
     "width": 64,
     "height": 64
   },
-  "element_yellow_diamond.png": {
+  "element_yellow_diamond": {
     "x": 352,
     "y": 384,
     "width": 96,
     "height": 96
   },
-  "element_yellow_diamond_glossy.png": {
+  "element_yellow_diamond_glossy": {
     "x": 352,
     "y": 288,
     "width": 96,
     "height": 96
   },
-  "element_yellow_polygon.png": {
+  "element_yellow_polygon": {
     "x": 304,
     "y": 196,
     "width": 96,
     "height": 92
   },
-  "element_yellow_polygon_glossy.png": {
+  "element_yellow_polygon_glossy": {
     "x": 256,
     "y": 572,
     "width": 96,
     "height": 92
   },
-  "element_yellow_rectangle.png": {
+  "element_yellow_rectangle": {
     "x": 128,
     "y": 548,
     "width": 128,
     "height": 64
   },
-  "element_yellow_rectangle_glossy.png": {
+  "element_yellow_rectangle_glossy": {
     "x": 128,
     "y": 292,
     "width": 128,
     "height": 64
   },
-  "element_yellow_square.png": {
+  "element_yellow_square": {
     "x": 384,
     "y": 668,
     "width": 64,
     "height": 64
   },
-  "element_yellow_square_glossy.png": {
+  "element_yellow_square_glossy": {
     "x": 640,
     "y": 288,
     "width": 64,
     "height": 64
   },
-  "hand.png": {
+  "hand": {
     "x": 0,
     "y": 676,
     "width": 54,
     "height": 50
   },
-  "handShadow.png": {
+  "handShadow": {
     "x": 54,
     "y": 676,
     "width": 54,
     "height": 56
   },
-  "paddleBlu.png": {
+  "paddleBlu": {
     "x": 0,
     "y": 196,
     "width": 208,
     "height": 48
   },
-  "paddleRed.png": {
+  "paddleRed": {
     "x": 0,
     "y": 244,
     "width": 208,
     "height": 48
   },
-  "particleCartoonStar.png": {
+  "particleCartoonStar": {
     "x": 640,
     "y": 544,
     "width": 20,
     "height": 20
   },
-  "particleSmallStar.png": {
+  "particleSmallStar": {
     "x": 236,
     "y": 676,
     "width": 20,
     "height": 20
   },
-  "particleStar.png": {
+  "particleStar": {
     "x": 196,
     "y": 676,
     "width": 40,
     "height": 40
   },
-  "pointer.png": {
+  "pointer": {
     "x": 664,
     "y": 682,
     "width": 40,
     "height": 48
   },
-  "pointerShadow.png": {
+  "pointerShadow": {
     "x": 664,
     "y": 628,
     "width": 40,
     "height": 54
   },
-  "pointerShadow_glossy.png": {
+  "pointerShadow_glossy": {
     "x": 496,
     "y": 188,
     "width": 40,
     "height": 54
   },
-  "pointerShadow_yellow.png": {
+  "pointerShadow_yellow": {
     "x": 656,
     "y": 96,
     "width": 40,
     "height": 54
   },
-  "pointer_glossy.png": {
+  "pointer_glossy": {
     "x": 668,
     "y": 48,
     "width": 40,
     "height": 48
   },
-  "pointer_yellow.png": {
+  "pointer_yellow": {
     "x": 668,
     "y": 0,
     "width": 40,
     "height": 48
   },
-  "selectorA.png": {
+  "selectorA": {
     "x": 524,
     "y": 656,
     "width": 76,
     "height": 76
   },
-  "selectorB.png": {
+  "selectorB": {
     "x": 448,
     "y": 656,
     "width": 76,
     "height": 76
   },
-  "selectorC.png": {
+  "selectorC": {
     "x": 640,
     "y": 224,
     "width": 64,

@@ -14,7 +14,7 @@
         const doc = new DOMParser().parseFromString(text, 'text/xml');
         const sprites = {};
         for (const subTexture of doc.querySelectorAll('SubTexture')) {
-            sprites[subTexture.getAttribute('name')] = {
+            sprites[subTexture.getAttribute('name').replace('.png', '')] = {
                 x: parseInt(subTexture.getAttribute('x')),
                 y: parseInt(subTexture.getAttribute('y')),
                 width: parseInt(subTexture.getAttribute('width')),

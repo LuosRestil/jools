@@ -50,9 +50,9 @@ function draw(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "rgb(30,30,30)";
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  const gdg = spriteMap["element_green_diamond_glossy.png"];
+  const gdg = spriteMap["element_green_diamond_glossy"];
   ctx.drawImage(sprites, gdg.x, gdg.y, gdg.width, gdg.height, WIDTH / 2 - gdg.width / 2, HEIGHT / 2 - gdg.height / 2, gdg.width, gdg.height);
-  const gd = spriteMap["element_green_diamond.png"];
+  const gd = spriteMap["element_green_diamond"];
   const ypos = HEIGHT / 2 - gd.height / 2 + gd.height;
   console.log(ypos);
   ctx.drawImage(sprites, gd.x, gd.y, gd.width, gd.height, WIDTH / 2 - gd.width / 2, ypos, gd.width, gd.height);
