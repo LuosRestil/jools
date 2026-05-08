@@ -1,3 +1,7 @@
+import { Sprite } from "./Sprite.js";
+import { loadSprites } from "./sprites.js";
+import { WithName } from "./WithName.js";
+
 const WIDTH = 1920;
 const HEIGHT = 1080;
 const DPR = window.devicePixelRatio || 1;
@@ -14,17 +18,42 @@ resize();
 
 const sprRes = await fetch("./public/sprites.json");
 const spriteMap = JSON.parse(await sprRes.text());
-if (spriteMap === null) {
-  throw Error("oh god, oh fuck");
-}
 
 let loading = true;
 
-const sprites = new Image();
-sprites.src = "./public/spritesheet_double.png";
-sprites.addEventListener("load", () => {
+const spritesheet = new Image();
+spritesheet.src = "./public/spritesheet_double.png";
+spritesheet.addEventListener("load", () => {
   loading = false;
 });
+
+const sprites = loadSprites(spriteMap)
+  .filter(sprite => !sprite.name.includes("glossy"));
+
+const tempCanvas = document.createElement('canvas');
+tempCanvas.width = spritesheet.width;
+tempCanvas.height = spritesheet.height;
+const tempCtx = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
+tempCtx.drawImage(spritesheet, 0, 0);
+let sprite = sprites[0];
+const data = tempCtx.getImageData(sprite.x, sprite.y, sprite.width, sprite.height).data;
+
+// Check edge pixels for non-zero alpha
+for (let x = 0; x < sprite.width; x++) {
+  const idx = x * 4; // top row
+  if (data[idx + 3] > 0 && data[idx + 3] < 255) {
+    console.log(`Semi-transparent pixel at (${x}, 0): alpha=${data[idx + 3]}, rgb=${data[idx]},${data[idx + 1]},${data[idx + 2]}`);
+  }
+}
+
+const grid: WithName<Sprite>[][] = [];
+for (let i = 0; i < 8; i++) {
+  let row = [];
+  for (let j = 0; j < 8; j++) {
+    row.push(sprites[Math.ceil(Math.random() * sprites.length) - 1]);
+  }
+  grid.push(row);
+}
 
 let lastFrameMs = 0;
 
@@ -50,32 +79,24 @@ function draw(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "rgb(30,30,30)";
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  const gdg = spriteMap["element_green_diamond_glossy"];
-  ctx.drawImage(
-    sprites,
-    gdg.x,
-    gdg.y,
-    gdg.width,
-    gdg.height,
-    WIDTH / 2 - gdg.width / 2,
-    HEIGHT / 2 - gdg.height / 2,
-    gdg.width,
-    gdg.height,
-  );
-  const gd = spriteMap["element_green_diamond"];
-  const ypos = HEIGHT / 2 - gd.height / 2 + gd.height;
-  console.log(ypos);
-  ctx.drawImage(
-    sprites,
-    gd.x,
-    gd.y,
-    gd.width,
-    gd.height,
-    WIDTH / 2 - gd.width / 2,
-    ypos,
-    gd.width,
-    gd.height,
-  );
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid.length; j++) {
+      let sprite = grid[i][j];
+      const x = Math.round(j * sprite.width);
+      const y = Math.round(i * sprite.height);
+      ctx.drawImage(
+        spritesheet,
+        sprite.x,
+        sprite.y,
+        sprite.width,
+        sprite.height,
+        x,
+        y,
+        sprite.width,
+        sprite.height,
+      );
+    }
+  }
 }
 
 function resize() {
