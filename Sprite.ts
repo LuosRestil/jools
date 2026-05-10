@@ -1,6 +1,7 @@
 export type Sprite = {
+  name: string;
   x: number;
   y: number;
-  width: number;
-  height: number;
+  w: number;
+  h: number;
 };

@@ -1,10 +1,18 @@
+import { Grid } from "./Grid.js";
 import { Sprite } from "./Sprite.js";
 import { loadSprites } from "./sprites.js";
-import { WithName } from "./WithName.js";
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
 const DPR = window.devicePixelRatio || 1;
+let scale: number = 1;
+let marginX: number = 0;
+let marginY: number = 0;
+
+let mouse: { x: number; y: number } = { x: 0, y: 0 };
+document.addEventListener("mousemove", (evt: MouseEvent) => {
+  mouse = screenToWorld({x: evt.clientX, y: evt.clientY});
+});
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -16,44 +24,22 @@ window.addEventListener("resize", () => {
 });
 resize();
 
-const sprRes = await fetch("./public/sprites.json");
-const spriteMap = JSON.parse(await sprRes.text());
+const sprRes = await fetch("./assets/spritesheet.json");
+const sprText = await sprRes.text();
+const spriteMap: {
+  [key: string]: { frames: { frame: Omit<Sprite, "name"> } };
+} = JSON.parse(sprText);
+const sprites = loadSprites(spriteMap.frames);
 
 let loading = true;
 
 const spritesheet = new Image();
-spritesheet.src = "./public/spritesheet_double.png";
+spritesheet.src = "./assets/spritesheet.png";
 spritesheet.addEventListener("load", () => {
   loading = false;
 });
 
-const sprites = loadSprites(spriteMap)
-  .filter(sprite => !sprite.name.includes("glossy"));
-
-const tempCanvas = document.createElement('canvas');
-tempCanvas.width = spritesheet.width;
-tempCanvas.height = spritesheet.height;
-const tempCtx = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
-tempCtx.drawImage(spritesheet, 0, 0);
-let sprite = sprites[0];
-const data = tempCtx.getImageData(sprite.x, sprite.y, sprite.width, sprite.height).data;
-
-// Check edge pixels for non-zero alpha
-for (let x = 0; x < sprite.width; x++) {
-  const idx = x * 4; // top row
-  if (data[idx + 3] > 0 && data[idx + 3] < 255) {
-    console.log(`Semi-transparent pixel at (${x}, 0): alpha=${data[idx + 3]}, rgb=${data[idx]},${data[idx + 1]},${data[idx + 2]}`);
-  }
-}
-
-const grid: WithName<Sprite>[][] = [];
-for (let i = 0; i < 8; i++) {
-  let row = [];
-  for (let j = 0; j < 8; j++) {
-    row.push(sprites[Math.ceil(Math.random() * sprites.length) - 1]);
-  }
-  grid.push(row);
-}
+const grid = new Grid(sprites);
 
 let lastFrameMs = 0;
 
@@ -79,33 +65,53 @@ function draw(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "rgb(30,30,30)";
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid.length; j++) {
-      let sprite = grid[i][j];
-      const x = Math.round(j * sprite.width);
-      const y = Math.round(i * sprite.height);
+  for (let i = 0; i < grid.sprites.length; i++) {
+    for (let j = 0; j < grid.sprites.length; j++) {
+      let sprite = grid.sprites[i][j];
+      const x = j * sprite.w;
+      const y = i * sprite.h;
       ctx.drawImage(
         spritesheet,
         sprite.x,
         sprite.y,
-        sprite.width,
-        sprite.height,
+        sprite.w,
+        sprite.h,
         x,
         y,
-        sprite.width,
-        sprite.height,
+        sprite.w,
+        sprite.h,
       );
     }
   }
+
+  ctx.beginPath();
+  ctx.fillStyle = "red";
+  ctx.arc(
+    mouse.x,
+    mouse.y,
+    15,
+    0,
+    Math.PI * 2,
+  );
+  ctx.fill();
 }
 
 function resize() {
-  const scale = Math.min(
-    window.innerWidth / WIDTH,
-    window.innerHeight / HEIGHT,
-  );
-  canvas.style.width = `${WIDTH * scale}px`;
-  canvas.style.height = `${HEIGHT * scale}px`;
+  scale = Math.min(window.innerWidth / WIDTH, window.innerHeight / HEIGHT);
+  let canvasWidth = WIDTH * scale;
+  let canvasHeight = HEIGHT * scale;
+  canvas.style.width = `${canvasWidth}px`;
+  canvas.style.height = `${canvasHeight}px`;
+
+  marginX = (window.innerWidth - canvasWidth) / 2;
+  marginY = (window.innerHeight - canvasHeight) / 2;
+}
+
+function screenToWorld(pos: { x: number; y: number }): {
+  x: number;
+  y: number;
+} {
+  return { x: (pos.x - marginX) / scale, y: (pos.y - marginY) / scale };
 }
 
 export {};
