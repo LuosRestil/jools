@@ -43,7 +43,7 @@ spritesheet.addEventListener("load", () => {
   loading = false;
 });
 
-const cellSize = { x: sprites[0].w, y: sprites[0].h };
+const cellSize = { x: sprites[0].w * 1.1, y: sprites[0].h * 1.1};
 const grid = new Grid({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
 const gridX = WIDTH / 2 - grid.size.w / 2;
 const gridY = HEIGHT / 2 - grid.size.h / 2;

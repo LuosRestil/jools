@@ -41,16 +41,18 @@ export class Grid {
     for (let i = 0; i < this.sprites.length; i++) {
       for (let j = 0; j < this.sprites.length; j++) {
         let sprite = this.sprites[i][j];
-        const x = j * this.cellSize.x + this.pos.x;
-        const y = i * this.cellSize.y + this.pos.y;
+        const cellX = j * this.cellSize.x + this.pos.x;
+        const cellY = i * this.cellSize.y + this.pos.y;
+        const cellMarginX = this.cellSize.x - sprite.w;
+        const cellMarginY = this.cellSize.y - sprite.h;
         ctx.drawImage(
           this.spritesheet,
           sprite.x,
           sprite.y,
           sprite.w,
           sprite.h,
-          x,
-          y,
+          cellX + cellMarginX * 0.5,
+          cellY + cellMarginY * 0.5,
           sprite.w,
           sprite.h,
         );
@@ -58,7 +60,7 @@ export class Grid {
           ctx.strokeStyle = "cyan";
           ctx.lineWidth = 5;
           ctx.beginPath();
-          ctx.roundRect(x, y, this.cellSize.x, this.cellSize.y, 10);
+          ctx.roundRect(cellX, cellY, this.cellSize.x, this.cellSize.y, 10);
           ctx.stroke();
         }
       }
