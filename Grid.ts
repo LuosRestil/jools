@@ -11,13 +11,13 @@ export class Grid {
   selected?: { row: number; col: number };
 
   constructor(
-    pos: { x: number, y: number },
     dim: {x: number, y: number},
     cellSize: { x: number; y: number },
     spriteOptions: Sprite[],
     spritesheet: HTMLImageElement,
+    pos?: { x: number, y: number },
   ) {
-    this.pos = pos;
+    this.pos = pos || {x: 0, y: 0};
     this.cellSize = cellSize;
     this.dim = dim;
     this.size = {w: cellSize.x * dim.x, h: cellSize.y * dim.y};

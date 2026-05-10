@@ -44,7 +44,10 @@ spritesheet.addEventListener("load", () => {
 });
 
 const cellSize = { x: sprites[0].w, y: sprites[0].h };
-const grid = new Grid({ x: 50, y: 50 }, {x: 8, y: 8}, cellSize, sprites, spritesheet);
+const grid = new Grid({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
+const gridX = WIDTH / 2 - grid.size.w / 2;
+const gridY = HEIGHT / 2 - grid.size.h / 2;
+grid.pos = { x: gridX, y: gridY };
 
 let lastFrameMs = 0;
 
@@ -72,10 +75,10 @@ function draw(ctx: CanvasRenderingContext2D) {
 
   grid.draw(ctx);
 
-  ctx.beginPath();
-  ctx.fillStyle = "red";
-  ctx.arc(mouse.x, mouse.y, 15, 0, Math.PI * 2);
-  ctx.fill();
+  // ctx.beginPath();
+  // ctx.fillStyle = "red";
+  // ctx.arc(mouse.x, mouse.y, 15, 0, Math.PI * 2);
+  // ctx.fill();
 }
 
 function resize() {
@@ -102,7 +105,7 @@ function worldToGrid(pos: { x: number; y: number }): {
 } {
   let gridX = pos.x - grid.pos.x;
   let col = Math.floor(gridX / grid.cellSize.x);
-  let gridY = pos.y - grid.pos.y; 
+  let gridY = pos.y - grid.pos.y;
   let row = Math.floor(gridY / grid.cellSize.y);
   return { row, col };
 }
