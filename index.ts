@@ -13,6 +13,9 @@ let mouse: { x: number; y: number } = { x: 0, y: 0 };
 document.addEventListener("mousemove", (evt: MouseEvent) => {
   mouse = screenToWorld({x: evt.clientX, y: evt.clientY});
 });
+document.addEventListener("mousedown", (evt: MouseEvent) =>  {
+  // TODO, select a given gem
+});
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
