@@ -14,7 +14,8 @@ document.addEventListener("mousemove", (evt: MouseEvent) => {
   mouse = screenToWorld({ x: evt.clientX, y: evt.clientY });
 });
 document.addEventListener("mousedown", (evt: MouseEvent) => {
-  // TODO, select a given gem
+  mouse = screenToWorld({ x: evt.clientX, y: evt.clientY });
+  grid.selected = worldToGrid({ x: mouse.x, y: mouse.y });
 });
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -42,8 +43,8 @@ spritesheet.addEventListener("load", () => {
   loading = false;
 });
 
-const cellSize = Math.max(sprites[0].w, sprites[0].h);
-const grid = new Grid({ x: 50, y: 50 }, cellSize, sprites, spritesheet);
+const cellSize = { x: sprites[0].w, y: sprites[0].h };
+const grid = new Grid({ x: 50, y: 50 }, {x: 8, y: 8}, cellSize, sprites, spritesheet);
 
 let lastFrameMs = 0;
 
@@ -93,6 +94,17 @@ function screenToWorld(pos: { x: number; y: number }): {
   y: number;
 } {
   return { x: (pos.x - marginX) / scale, y: (pos.y - marginY) / scale };
+}
+
+function worldToGrid(pos: { x: number; y: number }): {
+  row: number;
+  col: number;
+} {
+  let gridX = pos.x - grid.pos.x;
+  let col = Math.floor(gridX / grid.cellSize.x);
+  let gridY = pos.y - grid.pos.y; 
+  let row = Math.floor(gridY / grid.cellSize.y);
+  return { row, col };
 }
 
 export {};
