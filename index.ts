@@ -11,9 +11,9 @@ let marginY: number = 0;
 
 let mouse: { x: number; y: number } = { x: 0, y: 0 };
 document.addEventListener("mousemove", (evt: MouseEvent) => {
-  mouse = screenToWorld({x: evt.clientX, y: evt.clientY});
+  mouse = screenToWorld({ x: evt.clientX, y: evt.clientY });
 });
-document.addEventListener("mousedown", (evt: MouseEvent) =>  {
+document.addEventListener("mousedown", (evt: MouseEvent) => {
   // TODO, select a given gem
 });
 
@@ -42,7 +42,8 @@ spritesheet.addEventListener("load", () => {
   loading = false;
 });
 
-const grid = new Grid(sprites);
+const cellSize = Math.max(sprites[0].w, sprites[0].h);
+const grid = new Grid({ x: 50, y: 50 }, cellSize, sprites, spritesheet);
 
 let lastFrameMs = 0;
 
@@ -68,34 +69,11 @@ function draw(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "rgb(30,30,30)";
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  for (let i = 0; i < grid.sprites.length; i++) {
-    for (let j = 0; j < grid.sprites.length; j++) {
-      let sprite = grid.sprites[i][j];
-      const x = j * sprite.w;
-      const y = i * sprite.h;
-      ctx.drawImage(
-        spritesheet,
-        sprite.x,
-        sprite.y,
-        sprite.w,
-        sprite.h,
-        x,
-        y,
-        sprite.w,
-        sprite.h,
-      );
-    }
-  }
+  grid.draw(ctx);
 
   ctx.beginPath();
   ctx.fillStyle = "red";
-  ctx.arc(
-    mouse.x,
-    mouse.y,
-    15,
-    0,
-    Math.PI * 2,
-  );
+  ctx.arc(mouse.x, mouse.y, 15, 0, Math.PI * 2);
   ctx.fill();
 }
 
