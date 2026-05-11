@@ -9,13 +9,22 @@ let scale: number = 1;
 let marginX: number = 0;
 let marginY: number = 0;
 
-let mouse: { x: number; y: number } = { x: 0, y: 0 };
-document.addEventListener("mousemove", (evt: MouseEvent) => {
-  mouse = screenToWorld({ x: evt.clientX, y: evt.clientY });
-});
+let dragStart: { x: number; y: number } | null = null;
 document.addEventListener("mousedown", (evt: MouseEvent) => {
-  mouse = screenToWorld({ x: evt.clientX, y: evt.clientY });
-  grid.selected = worldToGrid({ x: mouse.x, y: mouse.y });
+  const loc = screenToWorld({ x: evt.clientX, y: evt.clientY });
+  if (!isOnGrid(worldToGrid(loc))) return;
+  dragStart = loc;
+});
+document.addEventListener("mouseup", (evt: MouseEvent) => {
+  const dragEnd = screenToWorld({ x: evt.clientX, y: evt.clientY });
+  const startRC = worldToGrid(dragStart!);
+  const endRC = worldToGrid(dragEnd);
+  const startGem = grid.sprites[startRC.row][startRC.col];
+  const endGem = grid.sprites[endRC.row][endRC.col];
+  dragStart = null;
+  if (startGem === endGem) return;
+  grid.sprites[startRC.row][startRC.col] = endGem;
+  grid.sprites[endRC.row][endRC.col] = startGem;
 });
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -43,7 +52,7 @@ spritesheet.addEventListener("load", () => {
   loading = false;
 });
 
-const cellSize = { x: sprites[0].w * 1.1, y: sprites[0].h * 1.1};
+const cellSize = { x: sprites[0].w * 1.1, y: sprites[0].h * 1.1 };
 const grid = new Grid({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
 const gridX = WIDTH / 2 - grid.size.w / 2;
 const gridY = HEIGHT / 2 - grid.size.h / 2;
@@ -74,11 +83,6 @@ function draw(ctx: CanvasRenderingContext2D) {
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
   grid.draw(ctx);
-
-  // ctx.beginPath();
-  // ctx.fillStyle = "red";
-  // ctx.arc(mouse.x, mouse.y, 15, 0, Math.PI * 2);
-  // ctx.fill();
 }
 
 function resize() {
@@ -108,6 +112,15 @@ function worldToGrid(pos: { x: number; y: number }): {
   let gridY = pos.y - grid.pos.y;
   let row = Math.floor(gridY / grid.cellSize.y);
   return { row, col };
+}
+
+function isOnGrid(pos: { row: number; col: number }): boolean {
+  return (
+    pos.row >= 0 &&
+    pos.row < grid.sprites.length &&
+    pos.col >= 0 &&
+    pos.col < grid.sprites[0].length
+  );
 }
 
 export {};

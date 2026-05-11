@@ -8,7 +8,6 @@ export class Grid {
   size: { w: number; h: number};
   dim: {x: number, y: number};
   cellSize: { x: number; y: number };
-  selected?: { row: number; col: number };
 
   constructor(
     dim: {x: number, y: number},
@@ -56,13 +55,6 @@ export class Grid {
           sprite.w,
           sprite.h,
         );
-        if (this.selected?.row === i && this.selected?.col === j) {
-          ctx.strokeStyle = "cyan";
-          ctx.lineWidth = 5;
-          ctx.beginPath();
-          ctx.roundRect(cellX, cellY, this.cellSize.x, this.cellSize.y, 10);
-          ctx.stroke();
-        }
       }
     }
   }
