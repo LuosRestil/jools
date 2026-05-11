@@ -2,6 +2,8 @@ import { Grid } from "./Grid.js";
 import { Sprite } from "./Sprite.js";
 import { loadSprites } from "./sprites.js";
 
+let debug: string | null = null;
+
 const WIDTH = 1920;
 const HEIGHT = 1080;
 const DPR = window.devicePixelRatio || 1;
@@ -16,15 +18,43 @@ document.addEventListener("mousedown", (evt: MouseEvent) => {
   dragStart = loc;
 });
 document.addEventListener("mouseup", (evt: MouseEvent) => {
+  if (dragStart === null) return;
+
   const dragEnd = screenToWorld({ x: evt.clientX, y: evt.clientY });
   const startRC = worldToGrid(dragStart!);
   const endRC = worldToGrid(dragEnd);
   const startGem = grid.sprites[startRC.row][startRC.col];
   const endGem = grid.sprites[endRC.row][endRC.col];
+
+  if (startGem === endGem) {
+    dragStart = null;
+    return;
+  }
+
+  let angleBetween = Math.atan2(
+    dragEnd.y - dragStart.y,
+    dragEnd.x - dragStart.x,
+  );
+  angleBetween = radToDeg(angleBetween);
+  let swapOffset: {x: number, y: number};
+  if (angleBetween <= -45 && angleBetween >= -135) {
+    // up
+    swapOffset = {x: 0, y: -1};
+  } else if (angleBetween >= 45 && angleBetween <= 135) {
+    // down
+    swapOffset = {x: 0, y: 1};
+  } else if (angleBetween >= -45 && angleBetween <= 45) {
+    // right
+    swapOffset = {x: 1, y: 0};
+  } else {
+    // left
+    swapOffset = {x: -1, y: 0};
+  }
+  let swapGem = grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x];
+  grid.sprites[startRC.row][startRC.col] = swapGem;
+  grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x] = startGem;
+
   dragStart = null;
-  if (startGem === endGem) return;
-  grid.sprites[startRC.row][startRC.col] = endGem;
-  grid.sprites[endRC.row][endRC.col] = startGem;
 });
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -83,6 +113,13 @@ function draw(ctx: CanvasRenderingContext2D) {
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
   grid.draw(ctx);
+
+  if (debug !== null) {
+    ctx.fillStyle = "white";
+    ctx.textBaseline = "top";
+    ctx.font = "bold 32px monospace";
+    ctx.fillText(debug, 10, 10);
+  }
 }
 
 function resize() {
@@ -121,6 +158,10 @@ function isOnGrid(pos: { row: number; col: number }): boolean {
     pos.col >= 0 &&
     pos.col < grid.sprites[0].length
   );
+}
+
+function radToDeg(rad: number): number {
+  return rad * 180 / Math.PI;
 }
 
 export {};
