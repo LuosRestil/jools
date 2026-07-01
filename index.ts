@@ -11,14 +11,31 @@ let scale: number = 1;
 let marginX: number = 0;
 let marginY: number = 0;
 
+let touchCount = 0;
+
+document.oncontextmenu = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    return false;
+};
+
 let dragStart: { x: number; y: number } | null = null;
-document.addEventListener("mousedown", (evt: MouseEvent) => {
+document.addEventListener("pointerdown", (evt: PointerEvent) => {
+  evt.preventDefault();
+  console.log("pointer down");
+  touchCount++; 
+  if (touchCount > 1) return;
+
   const loc = screenToWorld({ x: evt.clientX, y: evt.clientY });
   if (!isOnGrid(worldToGrid(loc))) return;
   dragStart = loc;
 });
-document.addEventListener("mouseup", (evt: MouseEvent) => {
-  if (dragStart === null) return;
+document.addEventListener("pointerup", (evt: PointerEvent) => {
+  console.log("pointer up");
+  touchCount--;
+  if (touchCount < 0) touchCount = 0;
+  if (dragStart === null || touchCount) return;
 
   const dragEnd = screenToWorld({ x: evt.clientX, y: evt.clientY });
   const startRC = worldToGrid(dragStart!);
