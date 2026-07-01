@@ -1,30 +1,38 @@
 import { Grid } from "./Grid.js";
 import { Sprite } from "./Sprite.js";
 import { loadSprites } from "./sprites.js";
+import { ScreenManager } from "./ScreenManager.js";
 
 let debug: string | null = null;
 
-const WIDTH = 1920;
-const HEIGHT = 1080;
-const DPR = window.devicePixelRatio || 1;
-let scale: number = 1;
-let marginX: number = 0;
-let marginY: number = 0;
+const screenManager = new ScreenManager(1920, 1080);
+
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+canvas.width = screenManager.width * screenManager.dpr;
+canvas.height = screenManager.height * screenManager.dpr;
+ctx.scale(screenManager.dpr, screenManager.dpr);
+screenManager.resize(canvas);
+
+window.addEventListener("resize", () => {
+  screenManager.resize(canvas);
+});
 
 let touchCount = 0;
 
+// prevents context menu from activating on long press
 document.oncontextmenu = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    return false;
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  return false;
 };
 
 let dragStart: { x: number; y: number } | null = null;
 document.addEventListener("pointerdown", (evt: PointerEvent) => {
   evt.preventDefault();
   console.log("pointer down");
-  touchCount++; 
+  touchCount++;
   if (touchCount > 1) return;
 
   const loc = screenToWorld({ x: evt.clientX, y: evt.clientY });
@@ -53,36 +61,28 @@ document.addEventListener("pointerup", (evt: PointerEvent) => {
     dragEnd.x - dragStart.x,
   );
   angleBetween = radToDeg(angleBetween);
-  let swapOffset: {x: number, y: number};
+  let swapOffset: { x: number; y: number };
   if (angleBetween <= -45 && angleBetween >= -135) {
     // up
-    swapOffset = {x: 0, y: -1};
+    swapOffset = { x: 0, y: -1 };
   } else if (angleBetween >= 45 && angleBetween <= 135) {
     // down
-    swapOffset = {x: 0, y: 1};
+    swapOffset = { x: 0, y: 1 };
   } else if (angleBetween >= -45 && angleBetween <= 45) {
     // right
-    swapOffset = {x: 1, y: 0};
+    swapOffset = { x: 1, y: 0 };
   } else {
     // left
-    swapOffset = {x: -1, y: 0};
+    swapOffset = { x: -1, y: 0 };
   }
-  let swapGem = grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x];
+  let swapGem =
+    grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x];
   grid.sprites[startRC.row][startRC.col] = swapGem;
-  grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x] = startGem;
+  grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x] =
+    startGem;
 
   dragStart = null;
 });
-
-const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-canvas.width = WIDTH * DPR;
-canvas.height = HEIGHT * DPR;
-ctx.scale(DPR, DPR);
-window.addEventListener("resize", () => {
-  resize();
-});
-resize();
 
 const sprRes = await fetch("./assets/spritesheet.json");
 const sprText = await sprRes.text();
@@ -95,14 +95,12 @@ let loading = true;
 
 const spritesheet = new Image();
 spritesheet.src = "./assets/spritesheet.png";
-spritesheet.addEventListener("load", () => {
-  loading = false;
-});
+spritesheet.addEventListener("load", () => loop(0));
 
 const cellSize = { x: sprites[0].w * 1.1, y: sprites[0].h * 1.1 };
 const grid = new Grid({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
-const gridX = WIDTH / 2 - grid.size.w / 2;
-const gridY = HEIGHT / 2 - grid.size.h / 2;
+const gridX = screenManager.width / 2 - grid.size.w / 2;
+const gridY = screenManager.height / 2 - grid.size.h / 2;
 grid.pos = { x: gridX, y: gridY };
 
 let lastFrameMs = 0;
@@ -117,17 +115,16 @@ function loop(ms: number) {
   if (loading) return;
 
   update(dts);
-  draw(ctx);
+  draw();
 }
-loop(0);
 
 function update(dts: number) {}
 
-function draw(ctx: CanvasRenderingContext2D) {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+function draw() {
+  ctx.clearRect(0, 0, screenManager.width, screenManager.height);
 
   ctx.fillStyle = "rgb(30,30,30)";
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
+  ctx.fillRect(0, 0, screenManager.width, screenManager.height);
 
   grid.draw(ctx);
 
@@ -139,22 +136,14 @@ function draw(ctx: CanvasRenderingContext2D) {
   }
 }
 
-function resize() {
-  scale = Math.min(window.innerWidth / WIDTH, window.innerHeight / HEIGHT);
-  let canvasWidth = WIDTH * scale;
-  let canvasHeight = HEIGHT * scale;
-  canvas.style.width = `${canvasWidth}px`;
-  canvas.style.height = `${canvasHeight}px`;
-
-  marginX = (window.innerWidth - canvasWidth) / 2;
-  marginY = (window.innerHeight - canvasHeight) / 2;
-}
-
 function screenToWorld(pos: { x: number; y: number }): {
   x: number;
   y: number;
 } {
-  return { x: (pos.x - marginX) / scale, y: (pos.y - marginY) / scale };
+  return {
+    x: (pos.x - screenManager.marginX) / screenManager.scale,
+    y: (pos.y - screenManager.marginY) / screenManager.scale,
+  };
 }
 
 function worldToGrid(pos: { x: number; y: number }): {
@@ -178,7 +167,7 @@ function isOnGrid(pos: { row: number; col: number }): boolean {
 }
 
 function radToDeg(rad: number): number {
-  return rad * 180 / Math.PI;
+  return (rad * 180) / Math.PI;
 }
 
 export {};
