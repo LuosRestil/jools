@@ -5,21 +5,21 @@ export class Grid {
   sprites: Sprite[][];
   spritesheet: HTMLImageElement;
   pos: { x: number; y: number };
-  size: { w: number; h: number};
-  dim: {x: number, y: number};
+  size: { w: number; h: number };
+  dim: { x: number; y: number };
   cellSize: { x: number; y: number };
 
   constructor(
-    dim: {x: number, y: number},
+    dim: { x: number; y: number },
     cellSize: { x: number; y: number },
     spriteOptions: Sprite[],
     spritesheet: HTMLImageElement,
-    pos?: { x: number, y: number },
+    pos?: { x: number; y: number },
   ) {
-    this.pos = pos || {x: 0, y: 0};
+    this.pos = pos || { x: 0, y: 0 };
     this.cellSize = cellSize;
     this.dim = dim;
-    this.size = {w: cellSize.x * dim.x, h: cellSize.y * dim.y};
+    this.size = { w: cellSize.x * dim.x, h: cellSize.y * dim.y };
     this.spriteOptions = spriteOptions;
     this.sprites = [];
     for (let i = 0; i < dim.y; i++) {
@@ -57,5 +57,52 @@ export class Grid {
         );
       }
     }
+  }
+
+  makesMatch(row: number, col: number) {
+    let sprite = this.sprites[row][col];
+    let vertCount = 1;
+    let horizCount = 1;
+    // left
+    let currentCol = col - 1;
+    while (
+      currentCol > 0 &&
+      // !sprite.fall &&
+      this.sprites[row][currentCol].name == sprite.name
+    ) {
+      vertCount += 1;
+      currentCol -= 1;
+    }
+    // right
+    currentCol = col + 1;
+    while (
+      currentCol <= this.dim.x &&
+      // !sprite.fall &&
+      this.sprites[row][currentCol].name == sprite.name
+    ) {
+      vertCount += 1;
+      currentCol += 1;
+    }
+    // up
+    let currentRow = row - 1;
+    while (
+      currentRow > 0 &&
+      // !sprite.fall &&
+      this.sprites[currentRow][col].name == sprite.name
+    ) {
+      horizCount += 1;
+      currentRow -= 1;
+    }
+    // down
+    currentRow = row + 1;
+    while (
+      currentRow <= this.dim.y &&
+      // !sprite.fall &&
+      this.sprites[currentRow][col].name == sprite.name
+    ) {
+      horizCount += 1;
+      currentRow += 1;
+    }
+    return Math.max(vertCount, horizCount) >= 3;
   }
 }

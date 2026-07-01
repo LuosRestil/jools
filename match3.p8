@@ -38,7 +38,7 @@ function _update()
 	if frame%flashrate==0 then
 		flash=not flash
 	end
-	update_bg()
+update_bg()
 	if state=="start" then
 		update_start()
 	elseif state=="game" then
