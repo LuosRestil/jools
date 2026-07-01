@@ -28,37 +28,31 @@ document.oncontextmenu = (event) => {
   return false;
 };
 
-let dragStart: { x: number; y: number } | null = null;
+let pointers = new Map();
+
 document.addEventListener("pointerdown", (evt: PointerEvent) => {
   evt.preventDefault();
-  console.log("pointer down");
-  touchCount++;
-  if (touchCount > 1) return;
 
   const loc = screenToWorld({ x: evt.clientX, y: evt.clientY });
   if (!isOnGrid(worldToGrid(loc))) return;
-  dragStart = loc;
+  pointers.set(evt.pointerId, loc);
 });
 document.addEventListener("pointerup", (evt: PointerEvent) => {
-  console.log("pointer up");
-  touchCount--;
-  if (touchCount < 0) touchCount = 0;
-  if (dragStart === null || touchCount) return;
-
+  const pointerStart = pointers.get(evt.pointerId);
+  pointers.delete(evt.pointerId);
   const dragEnd = screenToWorld({ x: evt.clientX, y: evt.clientY });
-  const startRC = worldToGrid(dragStart!);
+  const startRC = worldToGrid(pointerStart);
   const endRC = worldToGrid(dragEnd);
   const startGem = grid.sprites[startRC.row][startRC.col];
   const endGem = grid.sprites[endRC.row][endRC.col];
 
   if (startGem === endGem) {
-    dragStart = null;
     return;
   }
 
   let angleBetween = Math.atan2(
-    dragEnd.y - dragStart.y,
-    dragEnd.x - dragStart.x,
+    dragEnd.y - pointerStart.y,
+    dragEnd.x - pointerStart.x,
   );
   angleBetween = radToDeg(angleBetween);
   let swapOffset: { x: number; y: number };
@@ -80,8 +74,6 @@ document.addEventListener("pointerup", (evt: PointerEvent) => {
   grid.sprites[startRC.row][startRC.col] = swapGem;
   grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x] =
     startGem;
-
-  dragStart = null;
 });
 
 const sprRes = await fetch("./assets/spritesheet.json");
