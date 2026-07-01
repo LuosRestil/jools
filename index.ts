@@ -2,6 +2,7 @@ import { Grid } from "./Grid.js";
 import { Sprite } from "./Sprite.js";
 import { loadSprites } from "./sprites.js";
 import { ScreenManager } from "./ScreenManager.js";
+import { Vec2 } from "./vec2.js";
 
 let debug: string | null = null;
 
@@ -18,8 +19,6 @@ window.addEventListener("resize", () => {
   screenManager.resize(canvas);
 });
 
-let touchCount = 0;
-
 // prevents context menu from activating on long press
 document.oncontextmenu = (event) => {
   event.preventDefault();
@@ -33,14 +32,14 @@ let pointers = new Map();
 document.addEventListener("pointerdown", (evt: PointerEvent) => {
   evt.preventDefault();
 
-  const loc = screenToWorld({ x: evt.clientX, y: evt.clientY });
+  const loc = screenManager.screenToWorld(new Vec2(evt.clientX, evt.clientY));
   if (!isOnGrid(worldToGrid(loc))) return;
   pointers.set(evt.pointerId, loc);
 });
 document.addEventListener("pointerup", (evt: PointerEvent) => {
   const pointerStart = pointers.get(evt.pointerId);
   pointers.delete(evt.pointerId);
-  const dragEnd = screenToWorld({ x: evt.clientX, y: evt.clientY });
+  const dragEnd = screenManager.screenToWorld(new Vec2(evt.clientX, evt.clientY));
   const startRC = worldToGrid(pointerStart);
   const endRC = worldToGrid(dragEnd);
   const startGem = grid.sprites[startRC.row][startRC.col];
@@ -88,7 +87,7 @@ spritesheet.src = "./assets/spritesheet.png";
 spritesheet.addEventListener("load", () => loop(0));
 
 const cellSize = { x: sprites[0].w * 1.1, y: sprites[0].h * 1.1 };
-const grid = new Grid({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
+const grid = new Grid<Sprite>({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
 const gridX = screenManager.width / 2 - grid.size.w / 2;
 const gridY = screenManager.height / 2 - grid.size.h / 2;
 grid.pos = { x: gridX, y: gridY };
@@ -124,17 +123,7 @@ function draw() {
   }
 }
 
-function screenToWorld(pos: { x: number; y: number }): {
-  x: number;
-  y: number;
-} {
-  return {
-    x: (pos.x - screenManager.marginX) / screenManager.scale,
-    y: (pos.y - screenManager.marginY) / screenManager.scale,
-  };
-}
-
-function worldToGrid(pos: { x: number; y: number }): {
+function worldToGrid(pos: Vec2): {
   row: number;
   col: number;
 } {
@@ -148,9 +137,9 @@ function worldToGrid(pos: { x: number; y: number }): {
 function isOnGrid(pos: { row: number; col: number }): boolean {
   return (
     pos.row >= 0 &&
-    pos.row < grid.sprites.length &&
+    pos.row < grid.dim.y &&
     pos.col >= 0 &&
-    pos.col < grid.sprites[0].length
+    pos.col < grid.dim.x
   );
 }
 
@@ -158,4 +147,4 @@ function radToDeg(rad: number): number {
   return (rad * 180) / Math.PI;
 }
 
-export {};
+// export {};

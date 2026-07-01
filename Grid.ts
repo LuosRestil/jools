@@ -1,6 +1,6 @@
 import { Sprite } from "./Sprite.js";
 
-export class Grid {
+export class Grid<T> {
   spriteOptions: Sprite[];
   sprites: Sprite[][];
   spritesheet: HTMLImageElement;

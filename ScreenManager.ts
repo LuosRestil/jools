@@ -1,3 +1,5 @@
+import { Vec2 } from "./vec2.js";
+
 export class ScreenManager {
   width: number;
   height: number;
@@ -28,4 +30,11 @@ export class ScreenManager {
     this.marginX = (window.innerWidth - canvasWidth) / 2;
     this.marginY = (window.innerHeight - canvasHeight) / 2;
   }
+
+  screenToWorld(pos: Vec2): Vec2 {
+  return {
+    x: (pos.x - this.marginX) / this.scale,
+    y: (pos.y - this.marginY) / this.scale,
+  };
+}
 }
