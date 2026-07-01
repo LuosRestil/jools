@@ -91,8 +91,6 @@ const spriteMap: {
 } = JSON.parse(sprText);
 const sprites = loadSprites(spriteMap.frames);
 
-let loading = true;
-
 const spritesheet = new Image();
 spritesheet.src = "./assets/spritesheet.png";
 spritesheet.addEventListener("load", () => loop(0));
@@ -111,8 +109,6 @@ function loop(ms: number) {
   const dtms = ms - lastFrameMs;
   lastFrameMs = ms;
   const dts = dtms / 1000;
-
-  if (loading) return;
 
   update(dts);
   draw();
