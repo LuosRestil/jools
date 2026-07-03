@@ -3,6 +3,8 @@ import Sprite from "./Sprite.js";
 import spriteUtils from "./sprites.js";
 import globals from "./globals.js";
 import Vec2 from "./Vec2.js";
+import utils from "./utils.js";
+import Rect from "./Rect.js";
 
 export default class Game {
   pointers: Map<number, Vec2>;
@@ -14,25 +16,41 @@ export default class Game {
     this.grid = new Grid({ x: 8, y: 8 }, this.cellSize);
   }
 
-  async load(onLoadComplete: Function) {
+  async load() {
     const sprRes = await fetch("./assets/spritesheet.json");
     const sprText = await sprRes.text();
     const spriteMap: {
-      [key: string]: { frames: { frame: Omit<Sprite, "name"> } };
+      [key: string]: { frames: { frame: Rect } };
     } = JSON.parse(sprText);
-    const sprites = spriteUtils.loadSprites(spriteMap.frames);
+    const spriteRects: Rect[] = spriteUtils.loadSpriteData(spriteMap.frames);
 
     const spritesheet = new Image();
     spritesheet.src = "./assets/spritesheet.png";
-    spritesheet.addEventListener("load", () => onLoadComplete());
+    await spritesheet.decode();
 
-    this.cellSize = { x: sprites[0].w, y: sprites[0].h };
+    this.cellSize = { x: spriteRects[0].w, y: spriteRects[0].h };
     const gridX = globals.RESOLUTION.w / 2 - this.grid.rect.w / 2;
     const gridY = globals.RESOLUTION.h / 2 - this.grid.rect.h / 2;
     this.grid.rect.x = gridX;
     this.grid.rect.y = gridY;
 
-    // TODO populate grid with gems
+    for (let i = 0; i < this.grid.cells.length; i++) {
+      for (let j = 0; j < this.grid.cells[0].length; j++) {
+        let rnd = utils.randInt(0, spriteRects.length);
+        let quad = spriteRects[rnd];
+        const cellX = j * this.grid.cellSize.x + this.grid.rect.x;
+        const cellY = i * this.grid.cellSize.y + this.grid.rect.y;
+        const cellMarginX = this.grid.cellSize.x - quad.w;
+        const cellMarginY = this.grid.cellSize.y - quad.h;
+        this.grid.cells[i][j] = new Sprite(
+          spritesheet,
+          quad,
+          rnd,
+          new Vec2(cellX + cellMarginX * 0.5, cellY + cellMarginY * 0.5),
+          new Vec2(cellX + cellMarginX * 0.5, cellY + cellMarginY * 0.5),
+        );
+      }
+    }
   }
 
   onPointerDown(pointerId: number, pos: Vec2) {
@@ -57,7 +75,7 @@ export default class Game {
       dragEnd.y - pointerStart.y,
       dragEnd.x - pointerStart.x,
     );
-    angleBetween = this.radToDeg(angleBetween);
+    angleBetween = utils.radToDeg(angleBetween);
     let swapOffset: { x: number; y: number };
     if (angleBetween <= -45 && angleBetween >= -135) {
       // up
@@ -85,26 +103,6 @@ export default class Game {
 
   draw(ctx: CanvasRenderingContext2D) {
     this.grid.draw(ctx);
-        // for (let i = 0; i < this.cells.length; i++) {
-    //   for (let j = 0; j < this.cells.length; j++) {
-    //     let sprite = this.cells[i][j];
-    //     const cellX = j * this.cellSize.x + this.pos.x;
-    //     const cellY = i * this.cellSize.y + this.pos.y;
-    //     const cellMarginX = this.cellSize.x - sprite.w;
-    //     const cellMarginY = this.cellSize.y - sprite.h;
-    //     ctx.drawImage(
-    //       this.spritesheet,
-    //       sprite.x,
-    //       sprite.y,
-    //       sprite.w,
-    //       sprite.h,
-    //       cellX + cellMarginX * 0.5,
-    //       cellY + cellMarginY * 0.5,
-    //       sprite.w,
-    //       sprite.h,
-    //     );
-    //   }
-    // }
   }
 
   worldToGrid(worldPos: Vec2): {
@@ -125,9 +123,5 @@ export default class Game {
       pos.col >= 0 &&
       pos.col < this.grid.dim.x
     );
-  }
-
-  radToDeg(rad: number): number {
-    return (rad * 180) / Math.PI;
   }
 }

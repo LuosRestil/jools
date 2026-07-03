@@ -16,16 +16,8 @@ window.addEventListener("resize", () => {
   screenManager.resize(canvas);
 });
 
-// prevents context menu from activating on long press
-document.oncontextmenu = (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-  event.stopImmediatePropagation();
-  return false;
-};
-
 let game = new Game();
-game.load(loop);
+await game.load();
 
 document.addEventListener("pointerdown", (evt: PointerEvent) => {
   evt.preventDefault();
@@ -35,8 +27,14 @@ document.addEventListener("pointerdown", (evt: PointerEvent) => {
 document.addEventListener("pointerup", (evt: PointerEvent) => {
   const pos = screenManager.screenToWorld(new Vec2(evt.clientX, evt.clientY));
   game.onPointerUp(evt.pointerId, pos);
-
 });
+// prevents context menu from activating on long press
+document.oncontextmenu = (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  return false;
+};
 
 let lastFrameMs = 0;
 
@@ -71,8 +69,4 @@ function draw() {
   }
 }
 
-
-
-
-
-// export {};
+loop(0);

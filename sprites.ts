@@ -1,14 +1,9 @@
-import Sprite from "./Sprite.js";
+import Rect from "./Rect.js";
 
-function loadSprites(spriteMap: {
-  [key: string]: { frame: Omit<Sprite, "name"> };
-}): Sprite[] {
-  return Object.entries(spriteMap).map((elem) => {
-    let { x, y, w, h } = elem[1].frame;
-    return { x, y, w, h, name: elem[0] };
-  });
+function loadSpriteRects(spriteMap: {[key: string]: {frame: Rect}}): Rect[] {
+  return Object.entries(spriteMap).map(entry => entry[1].frame);
 }
 
 export default {
-  loadSprites
+  loadSpriteData: loadSpriteRects
 }
