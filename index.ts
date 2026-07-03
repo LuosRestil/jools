@@ -42,8 +42,8 @@ document.addEventListener("pointerup", (evt: PointerEvent) => {
   const dragEnd = screenManager.screenToWorld(new Vec2(evt.clientX, evt.clientY));
   const startRC = worldToGrid(pointerStart);
   const endRC = worldToGrid(dragEnd);
-  const startGem = grid.sprites[startRC.row][startRC.col];
-  const endGem = grid.sprites[endRC.row][endRC.col];
+  const startGem = grid.cells[startRC.row][startRC.col];
+  const endGem = grid.cells[endRC.row][endRC.col];
 
   if (startGem === endGem) {
     return;
@@ -69,9 +69,9 @@ document.addEventListener("pointerup", (evt: PointerEvent) => {
     swapOffset = { x: -1, y: 0 };
   }
   let swapGem =
-    grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x];
-  grid.sprites[startRC.row][startRC.col] = swapGem;
-  grid.sprites[startRC.row + swapOffset.y][startRC.col + swapOffset.x] =
+    grid.cells[startRC.row + swapOffset.y][startRC.col + swapOffset.x];
+  grid.cells[startRC.row][startRC.col] = swapGem;
+  grid.cells[startRC.row + swapOffset.y][startRC.col + swapOffset.x] =
     startGem;
 });
 
@@ -87,10 +87,11 @@ spritesheet.src = "./assets/spritesheet.png";
 spritesheet.addEventListener("load", () => loop(0));
 
 const cellSize = { x: sprites[0].w * 1.1, y: sprites[0].h * 1.1 };
-const grid = new Grid<Sprite>({ x: 8, y: 8 }, cellSize, sprites, spritesheet);
-const gridX = screenManager.width / 2 - grid.size.w / 2;
-const gridY = screenManager.height / 2 - grid.size.h / 2;
-grid.pos = { x: gridX, y: gridY };
+const grid = new Grid({ x: 8, y: 8 }, cellSize);
+const gridX = screenManager.width / 2 - grid.rect.w / 2;
+const gridY = screenManager.height / 2 - grid.rect.h / 2;
+grid.rect.x = gridX;
+grid.rect.y = gridY;
 
 let lastFrameMs = 0;
 
@@ -127,9 +128,9 @@ function worldToGrid(pos: Vec2): {
   row: number;
   col: number;
 } {
-  let gridX = pos.x - grid.pos.x;
+  let gridX = pos.x - grid.rect.x;
   let col = Math.floor(gridX / grid.cellSize.x);
-  let gridY = pos.y - grid.pos.y;
+  let gridY = pos.y - grid.rect.y;
   let row = Math.floor(gridY / grid.cellSize.y);
   return { row, col };
 }

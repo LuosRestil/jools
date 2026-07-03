@@ -1,108 +1,110 @@
-import { Sprite } from "./Sprite.js";
+import { GameObject } from "./GameObject.js";
+import { Rect } from "./Rect.js";
+import { Vec2 } from "./vec2.js";
 
-export class Grid<T> {
-  spriteOptions: Sprite[];
-  sprites: Sprite[][];
-  spritesheet: HTMLImageElement;
-  pos: { x: number; y: number };
-  size: { w: number; h: number };
-  dim: { x: number; y: number };
-  cellSize: { x: number; y: number };
+export class Grid {
+  cells: (GameObject | null)[][];
+  dim: Vec2;
+  cellSize: Vec2;
+  rect: Rect;
 
   constructor(
-    dim: { x: number; y: number },
-    cellSize: { x: number; y: number },
-    spriteOptions: Sprite[],
-    spritesheet: HTMLImageElement,
-    pos?: { x: number; y: number },
+    dim: Vec2,
+    cellSize: Vec2,
+    pos?: Vec2,
   ) {
-    this.pos = pos || { x: 0, y: 0 };
     this.cellSize = cellSize;
     this.dim = dim;
-    this.size = { w: cellSize.x * dim.x, h: cellSize.y * dim.y };
-    this.spriteOptions = spriteOptions;
-    this.sprites = [];
-    for (let i = 0; i < dim.y; i++) {
-      let row = [];
-      for (let j = 0; j < dim.x; j++) {
-        row.push(
-          spriteOptions[Math.ceil(Math.random() * spriteOptions.length) - 1],
-        );
-      }
-      this.sprites.push(row);
-    }
-    this.spritesheet = spritesheet;
+    this.rect = new Rect(pos?.x ?? 0, pos?.y ?? 0, cellSize.x * dim.x, cellSize.y * dim.y);
+    this.cells = Array.from({length: dim.y}, () => Array(dim.x).fill(null));
+    
+        // row.push(
+        //   spriteOptions[Math.ceil(Math.random() * spriteOptions.length) - 1],
+        // );
+
+    // this.spritesheet = spritesheet;
   }
 
-  update(dt: number) {}
+  update(dt: number) {
+    for (let row of this.cells) {
+      for (let cell of row) {
+        cell && cell.update(dt);
+      }
+    }
+  }
 
   draw(ctx: CanvasRenderingContext2D) {
-    for (let i = 0; i < this.sprites.length; i++) {
-      for (let j = 0; j < this.sprites.length; j++) {
-        let sprite = this.sprites[i][j];
-        const cellX = j * this.cellSize.x + this.pos.x;
-        const cellY = i * this.cellSize.y + this.pos.y;
-        const cellMarginX = this.cellSize.x - sprite.w;
-        const cellMarginY = this.cellSize.y - sprite.h;
-        ctx.drawImage(
-          this.spritesheet,
-          sprite.x,
-          sprite.y,
-          sprite.w,
-          sprite.h,
-          cellX + cellMarginX * 0.5,
-          cellY + cellMarginY * 0.5,
-          sprite.w,
-          sprite.h,
-        );
+    for (let row of this.cells) {
+      for (let cell of row) {
+        cell && cell.draw(ctx);
       }
     }
+    // for (let i = 0; i < this.cells.length; i++) {
+    //   for (let j = 0; j < this.cells.length; j++) {
+    //     let sprite = this.cells[i][j];
+    //     const cellX = j * this.cellSize.x + this.pos.x;
+    //     const cellY = i * this.cellSize.y + this.pos.y;
+    //     const cellMarginX = this.cellSize.x - sprite.w;
+    //     const cellMarginY = this.cellSize.y - sprite.h;
+    //     ctx.drawImage(
+    //       this.spritesheet,
+    //       sprite.x,
+    //       sprite.y,
+    //       sprite.w,
+    //       sprite.h,
+    //       cellX + cellMarginX * 0.5,
+    //       cellY + cellMarginY * 0.5,
+    //       sprite.w,
+    //       sprite.h,
+    //     );
+    //   }
+    // }
   }
 
-  makesMatch(row: number, col: number) {
-    let sprite = this.sprites[row][col];
-    let vertCount = 1;
-    let horizCount = 1;
-    // left
-    let currentCol = col - 1;
-    while (
-      currentCol > 0 &&
-      // !sprite.fall &&
-      this.sprites[row][currentCol].name == sprite.name
-    ) {
-      vertCount += 1;
-      currentCol -= 1;
-    }
-    // right
-    currentCol = col + 1;
-    while (
-      currentCol <= this.dim.x &&
-      // !sprite.fall &&
-      this.sprites[row][currentCol].name == sprite.name
-    ) {
-      vertCount += 1;
-      currentCol += 1;
-    }
-    // up
-    let currentRow = row - 1;
-    while (
-      currentRow > 0 &&
-      // !sprite.fall &&
-      this.sprites[currentRow][col].name == sprite.name
-    ) {
-      horizCount += 1;
-      currentRow -= 1;
-    }
-    // down
-    currentRow = row + 1;
-    while (
-      currentRow <= this.dim.y &&
-      // !sprite.fall &&
-      this.sprites[currentRow][col].name == sprite.name
-    ) {
-      horizCount += 1;
-      currentRow += 1;
-    }
-    return Math.max(vertCount, horizCount) >= 3;
-  }
+  // makesMatch(row: number, col: number) {
+  //   let sprite = this.cells[row][col];
+  //   let vertCount = 1;
+  //   let horizCount = 1;
+  //   // left
+  //   let currentCol = col - 1;
+  //   while (
+  //     currentCol > 0 &&
+  //     // !sprite.fall &&
+  //     this.cells[row][currentCol].name == sprite.name
+  //   ) {
+  //     vertCount += 1;
+  //     currentCol -= 1;
+  //   }
+  //   // right
+  //   currentCol = col + 1;
+  //   while (
+  //     currentCol <= this.dim.x &&
+  //     // !sprite.fall &&
+  //     this.cells[row][currentCol].name == sprite.name
+  //   ) {
+  //     vertCount += 1;
+  //     currentCol += 1;
+  //   }
+  //   // up
+  //   let currentRow = row - 1;
+  //   while (
+  //     currentRow > 0 &&
+  //     // !sprite.fall &&
+  //     this.cells[currentRow][col].name == sprite.name
+  //   ) {
+  //     horizCount += 1;
+  //     currentRow -= 1;
+  //   }
+  //   // down
+  //   currentRow = row + 1;
+  //   while (
+  //     currentRow <= this.dim.y &&
+  //     // !sprite.fall &&
+  //     this.cells[currentRow][col].name == sprite.name
+  //   ) {
+  //     horizCount += 1;
+  //     currentRow += 1;
+  //   }
+  //   return Math.max(vertCount, horizCount) >= 3;
+  // }
 }
