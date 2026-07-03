@@ -1,8 +1,8 @@
-import { GameObject } from "./GameObject.js";
-import { Rect } from "./Rect.js";
-import { Vec2 } from "./vec2.js";
+import GameObject from "./GameObject.js";
+import Rect from "./Rect.js";
+import Vec2 from "./Vec2.js";
 
-export class Grid {
+export default class Grid {
   cells: (GameObject | null)[][];
   dim: Vec2;
   cellSize: Vec2;
@@ -17,12 +17,6 @@ export class Grid {
     this.dim = dim;
     this.rect = new Rect(pos?.x ?? 0, pos?.y ?? 0, cellSize.x * dim.x, cellSize.y * dim.y);
     this.cells = Array.from({length: dim.y}, () => Array(dim.x).fill(null));
-    
-        // row.push(
-        //   spriteOptions[Math.ceil(Math.random() * spriteOptions.length) - 1],
-        // );
-
-    // this.spritesheet = spritesheet;
   }
 
   update(dt: number) {
@@ -39,26 +33,7 @@ export class Grid {
         cell && cell.draw(ctx);
       }
     }
-    // for (let i = 0; i < this.cells.length; i++) {
-    //   for (let j = 0; j < this.cells.length; j++) {
-    //     let sprite = this.cells[i][j];
-    //     const cellX = j * this.cellSize.x + this.pos.x;
-    //     const cellY = i * this.cellSize.y + this.pos.y;
-    //     const cellMarginX = this.cellSize.x - sprite.w;
-    //     const cellMarginY = this.cellSize.y - sprite.h;
-    //     ctx.drawImage(
-    //       this.spritesheet,
-    //       sprite.x,
-    //       sprite.y,
-    //       sprite.w,
-    //       sprite.h,
-    //       cellX + cellMarginX * 0.5,
-    //       cellY + cellMarginY * 0.5,
-    //       sprite.w,
-    //       sprite.h,
-    //     );
-    //   }
-    // }
+
   }
 
   // makesMatch(row: number, col: number) {

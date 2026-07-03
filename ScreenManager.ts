@@ -1,6 +1,6 @@
-import { Vec2 } from "./vec2.js";
+import Vec2 from "./Vec2.js";
 
-export class ScreenManager {
+export default class ScreenManager {
   width: number;
   height: number;
   dpr: number;
