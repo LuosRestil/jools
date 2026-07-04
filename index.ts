@@ -3,7 +3,7 @@ import Vec2 from "./Vec2.js";
 import globals from "./globals.js";
 import Game from "./Game.js";
 
-const screenManager = new ScreenManager(1920, 1080);
+const screenManager = new ScreenManager(globals.RESOLUTION.w, globals.RESOLUTION.h);
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -43,6 +43,9 @@ document.oncontextmenu = (event) => {
 };
 
 let lastFrameMs = 0;
+let frames = 0;
+let elapsed = 0;
+let fps = 0;
 
 function loop(ms: number) {
   requestAnimationFrame(loop);
@@ -50,6 +53,15 @@ function loop(ms: number) {
   const dtms = ms - lastFrameMs;
   lastFrameMs = ms;
   const dts = dtms / 1000;
+
+  frames++;
+  elapsed += dts;
+  if (elapsed > 1) {
+    elapsed -= 1;
+    fps = frames;
+    globals.debug = `fps: ${frames}`;
+    frames = 0;
+  }
 
   update(dts);
   draw();

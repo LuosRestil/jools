@@ -87,35 +87,21 @@ export default class Gem implements GameObject {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    if (this.rotation) {
-      ctx.save();
-      ctx.translate(this.pos.x + this.quad.w / 2, this.pos.y + this.quad.h / 2);
-      ctx.rotate(this.rotation);
-      ctx.drawImage(
-        this.img,
-        this.quad.x,
-        this.quad.y,
-        this.quad.w,
-        this.quad.h,
-        -this.quad.w / 2,
-        -this.quad.h / 2,
-        this.quad.w,
-        this.quad.h,
-      );
-      ctx.restore();
-    } else {
-      ctx.drawImage(
-        this.img,
-        this.quad.x,
-        this.quad.y,
-        this.quad.w,
-        this.quad.h,
-        this.pos.x,
-        this.pos.y,
-        this.quad.w,
-        this.quad.h,
-      );
-    }
+    ctx.save();
+    ctx.translate(this.pos.x + this.quad.w / 2, this.pos.y + this.quad.h / 2);
+    ctx.rotate(this.rotation);
+    ctx.drawImage(
+      this.img,
+      this.quad.x,
+      this.quad.y,
+      this.quad.w,
+      this.quad.h,
+      -this.quad.w / 2,
+      -this.quad.h / 2,
+      this.quad.w,
+      this.quad.h,
+    );
+    ctx.restore();
   }
 
   getRow(): number {
