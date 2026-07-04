@@ -15,6 +15,7 @@ export default class Gem implements GameObject {
   img: HTMLImageElement;
   quad: Rect;
   rotation = 0;
+  size: Vec2;
 
   rotFreq = 8;
   rotMag = 10;
@@ -41,11 +42,13 @@ export default class Gem implements GameObject {
     spriteType: number,
     row: number,
     col: number,
+    size: Vec2
   ) {
     this.grid = grid;
     this.img = img;
     this.quad = quad;
     this.gemType = spriteType;
+    this.size = size;
     this.setRow(row);
     this.setCol(col);
     this.pos = this.origin.copy();
@@ -87,8 +90,20 @@ export default class Gem implements GameObject {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    // ctx.drawImage(
+    //   this.img,
+    //   this.quad.x,
+    //   this.quad.y,
+    //   this.quad.w,
+    //   this.quad.h,
+    //   this.pos.x,
+    //   this.pos.y,
+    //   this.size.x,
+    //   this.size.y
+    // )
+
     ctx.save();
-    ctx.translate(this.pos.x + this.quad.w / 2, this.pos.y + this.quad.h / 2);
+    ctx.translate(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2);
     ctx.rotate(this.rotation);
     ctx.drawImage(
       this.img,
@@ -96,10 +111,10 @@ export default class Gem implements GameObject {
       this.quad.y,
       this.quad.w,
       this.quad.h,
-      -this.quad.w / 2,
-      -this.quad.h / 2,
-      this.quad.w,
-      this.quad.h,
+      -this.size.x / 2,
+      -this.size.y / 2,
+      this.size.x,
+      this.size.y,
     );
     ctx.restore();
   }
@@ -111,7 +126,7 @@ export default class Gem implements GameObject {
   setRow(row: number): void {
     this.#row = row;
     let cellY = row * this.grid.getCellSize().y + this.grid.rect.y;
-    let cellMarginY = this.grid.getCellSize().y - this.quad.h;
+    let cellMarginY = this.grid.getCellSize().y - this.size.y;
     this.origin.y = cellY + cellMarginY * 0.5;
   }
 
@@ -122,7 +137,7 @@ export default class Gem implements GameObject {
   setCol(col: number): void {
     this.#col = col;
     let cellX = col * this.grid.getCellSize().x + this.grid.rect.x;
-    let cellMarginX = this.grid.getCellSize().x - this.quad.w;
+    let cellMarginX = this.grid.getCellSize().x - this.size.x;
     this.origin.x = cellX + cellMarginX * 0.5;
   }
 

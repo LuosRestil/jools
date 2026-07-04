@@ -30,7 +30,7 @@ export default class Game {
     spritesheet.src = "./assets/spritesheet.png";
     await spritesheet.decode();
 
-    this.grid.setCellSize(new Vec2(spriteRects[0].w, spriteRects[0].h));
+    this.grid.setCellSize(new Vec2(spriteRects[0].w * 1.3, spriteRects[0].h * 1.3));
     const gridX = globals.RESOLUTION.w / 2 - this.grid.rect.w / 2;
     const gridY = globals.RESOLUTION.h / 2 - this.grid.rect.h / 2;
     this.grid.rect.x = gridX;
@@ -47,6 +47,7 @@ export default class Game {
           rnd,
           row,
           col,
+          this.grid.getCellSize().copy()
         );
       }
     }

@@ -29,6 +29,8 @@ export default class Grid<T extends GameObject> {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    // this.drawGrid(ctx);
+
     for (let row of this.cells) {
       for (let cell of row) {
         cell && cell.draw(ctx);
@@ -44,6 +46,21 @@ export default class Grid<T extends GameObject> {
     this.#cellSize = cellSize;
     this.rect.w = cellSize.x * this.dim.x;
     this.rect.h = cellSize.y * this.dim.y;
+  }
+
+  drawGrid(ctx: CanvasRenderingContext2D): void {
+    ctx.strokeStyle = "white";
+    for (let i = 0; i < this.cells.length + 1; i++) {
+      ctx.beginPath();
+
+      ctx.moveTo(i * this.#cellSize.x + this.rect.x, this.rect.y);
+      ctx.lineTo(i * this.#cellSize.x + this.rect.x, this.rect.y + this.rect.w);
+      ctx.stroke();
+
+      ctx.moveTo(this.rect.x, i * this.#cellSize.y + this.rect.y);
+      ctx.lineTo(this.rect.x + this.rect.w, i * this.#cellSize.y + this.rect.y);
+      ctx.stroke();
+    }
   }
 
   // makesMatch(row: number, col: number) {
