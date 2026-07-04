@@ -1,3 +1,4 @@
+import Easings from "./Easings.js";
 import utils from "./utils.js";
 
 type NumericKeys<T> = {
@@ -10,6 +11,7 @@ export default class Tween<T> {
   startVal: number;
   target: number;
   duration: number;
+  ease: Function = Easings.linear;
   callback?: Function;
 
   elapsed = 0;
@@ -28,6 +30,13 @@ export default class Tween<T> {
     this.target = target;
     this.duration = duration;
     this.callback = callback;
+
+    return this;
+  }
+
+  withEasing(easingFunction: Function) {
+    this.ease = easingFunction;
+    return this;
   }
 
   update(dt: number): void {
@@ -40,7 +49,7 @@ export default class Tween<T> {
     (this.obj[this.prop] as unknown as number) = utils.lerp(
       this.startVal,
       this.target,
-      this.elapsed / this.duration,
+      this.ease(this.elapsed / this.duration),
     );
   }
 }

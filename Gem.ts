@@ -1,3 +1,4 @@
+import Easings from "./Easings.js";
 import GameObject from "./GameObject.js";
 import globals from "./globals.js";
 import Grid from "./Grid.js";
@@ -164,8 +165,12 @@ export default class Gem implements GameObject {
         this.origin.x,
         this.snapTime,
         () => (this.anchored = true),
+      ).withEasing(Easings.outQuart),
+    );
+    this.tweens.push(
+      new Tween(this.pos, "y", this.origin.y, this.snapTime).withEasing(
+        Easings.outQuart,
       ),
     );
-    this.tweens.push(new Tween(this.pos, "y", this.origin.y, this.snapTime));
   }
 }

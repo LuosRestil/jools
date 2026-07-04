@@ -69,7 +69,7 @@ export default class Game {
     if (!releasedGem) return;
     this.pointers.delete(pointerId);
 
-    this.swap(releasedGem, pos);
+    this.swap(releasedGem);
   }
 
   update(dt: number) {
@@ -80,16 +80,13 @@ export default class Game {
     this.grid.draw(ctx);
   }
 
-  swap(gem: Gem, dragEnd: Vec2): SwapStatus {
+  swap(gem: Gem): SwapStatus {
     let offset = Vec2.sub(globals.mousePos, gem.touchpoint);
     let swapGem = this.getGemForSwap(gem, offset);
     if (swapGem === null || !swapGem.anchored) {
       gem.deselect();
       return SwapStatus.NO_SWAP;
     }
-    console.log(
-      `swap: ${gem.getRow()}, ${gem.getCol()} -> ${swapGem.getRow()}, ${swapGem.getCol()}`,
-    );
 
     let tmpRow = gem.getRow();
     let tmpCol = gem.getCol();
