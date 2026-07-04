@@ -10,8 +10,13 @@ function randChoice<T>(arr: Array<T>): T {
   return arr[randInt(0, arr.length)];
 }
 
+function lerp(a: number, b: number, pct: number) {
+  return a + (b - a) * pct;
+}
+
 export default {
   radToDeg,
   randInt,
-  randChoice
+  randChoice,
+  lerp
 };

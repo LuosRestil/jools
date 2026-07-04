@@ -28,6 +28,12 @@ document.addEventListener("pointerup", (evt: PointerEvent) => {
   const pos = screenManager.screenToWorld(new Vec2(evt.clientX, evt.clientY));
   game.onPointerUp(evt.pointerId, pos);
 });
+let moveScreenToWorld = new Vec2(0, 0);
+document.addEventListener("pointermove", (evt: PointerEvent) => {
+  moveScreenToWorld.x = evt.clientX;
+  moveScreenToWorld.y = evt.clientY;
+  globals.mousePos = screenManager.screenToWorld(moveScreenToWorld);
+});
 // prevents context menu from activating on long press
 document.oncontextmenu = (event) => {
   event.preventDefault();
@@ -67,6 +73,11 @@ function draw() {
     ctx.font = "bold 32px monospace";
     ctx.fillText(globals.debug, 10, 10);
   }
+
+  // ctx.fillStyle = "red";
+  // ctx.beginPath();
+  // ctx.arc(globals.mousePos.x, globals.mousePos.y, 15, 0, Math.PI * 2);
+  // ctx.fill();
 }
 
 loop(0);

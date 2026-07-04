@@ -32,9 +32,8 @@ export default class ScreenManager {
   }
 
   screenToWorld(pos: Vec2): Vec2 {
-  return {
-    x: (pos.x - this.marginX) / this.scale,
-    y: (pos.y - this.marginY) / this.scale,
-  };
-}
+    pos.x = (pos.x - this.marginX) / this.scale;
+    pos.y = (pos.y - this.marginY) / this.scale;
+    return pos;
+  }
 }

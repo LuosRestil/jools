@@ -2,21 +2,22 @@ import GameObject from "./GameObject.js";
 import Rect from "./Rect.js";
 import Vec2 from "./Vec2.js";
 
-export default class Grid {
-  cells: (GameObject | null)[][];
+export default class Grid<T extends GameObject> {
+  cells: (T | null)[][];
   dim: Vec2;
-  cellSize: Vec2;
+  #cellSize: Vec2;
   rect: Rect;
 
-  constructor(
-    dim: Vec2,
-    cellSize: Vec2,
-    pos?: Vec2,
-  ) {
-    this.cellSize = cellSize;
+  constructor(dim: Vec2, cellSize: Vec2, pos?: Vec2) {
+    this.#cellSize = cellSize;
     this.dim = dim;
-    this.rect = new Rect(pos?.x ?? 0, pos?.y ?? 0, cellSize.x * dim.x, cellSize.y * dim.y);
-    this.cells = Array.from({length: dim.y}, () => Array(dim.x).fill(null));
+    this.rect = new Rect(
+      pos?.x ?? 0,
+      pos?.y ?? 0,
+      cellSize.x * dim.x,
+      cellSize.y * dim.y,
+    );
+    this.cells = Array.from({ length: dim.y }, () => Array(dim.x).fill(null));
   }
 
   update(dt: number) {
@@ -33,7 +34,16 @@ export default class Grid {
         cell && cell.draw(ctx);
       }
     }
+  }
 
+  getCellSize(): Vec2 {
+    return this.#cellSize;
+  }
+
+  setCellSize(cellSize: Vec2): void {
+    this.#cellSize = cellSize;
+    this.rect.w = cellSize.x * this.dim.x;
+    this.rect.h = cellSize.y * this.dim.y;
   }
 
   // makesMatch(row: number, col: number) {

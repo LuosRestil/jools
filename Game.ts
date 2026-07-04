@@ -1,5 +1,5 @@
 import Grid from "./Grid.js";
-import Sprite from "./Sprite.js";
+import Gem from "./Gem.js";
 import spriteUtils from "./sprites.js";
 import globals from "./globals.js";
 import Vec2 from "./Vec2.js";
@@ -7,13 +7,15 @@ import utils from "./utils.js";
 import Rect from "./Rect.js";
 
 export default class Game {
-  pointers: Map<number, Vec2>;
-  cellSize: Vec2 = { x: 0, y: 0 };
-  grid: Grid;
+  pointers: Map<number, Gem>;
+  grid: Grid<Gem>;
+
+  swipeDistancePct = 0.2;
+  lastSwap: Gem[] = [];
 
   constructor() {
     this.pointers = new Map();
-    this.grid = new Grid({ x: 8, y: 8 }, this.cellSize);
+    this.grid = new Grid(new Vec2(8, 8), new Vec2(32, 32));
   }
 
   async load() {
@@ -28,73 +30,46 @@ export default class Game {
     spritesheet.src = "./assets/spritesheet.png";
     await spritesheet.decode();
 
-    this.cellSize = { x: spriteRects[0].w, y: spriteRects[0].h };
+    this.grid.setCellSize(new Vec2(spriteRects[0].w, spriteRects[0].h));
     const gridX = globals.RESOLUTION.w / 2 - this.grid.rect.w / 2;
     const gridY = globals.RESOLUTION.h / 2 - this.grid.rect.h / 2;
     this.grid.rect.x = gridX;
     this.grid.rect.y = gridY;
 
-    for (let i = 0; i < this.grid.cells.length; i++) {
-      for (let j = 0; j < this.grid.cells[0].length; j++) {
+    for (let row = 0; row < this.grid.cells.length; row++) {
+      for (let col = 0; col < this.grid.cells[0].length; col++) {
         let rnd = utils.randInt(0, spriteRects.length);
         let quad = spriteRects[rnd];
-        const cellX = j * this.grid.cellSize.x + this.grid.rect.x;
-        const cellY = i * this.grid.cellSize.y + this.grid.rect.y;
-        const cellMarginX = this.grid.cellSize.x - quad.w;
-        const cellMarginY = this.grid.cellSize.y - quad.h;
-        this.grid.cells[i][j] = new Sprite(
+        this.grid.cells[row][col] = new Gem(
+          this.grid,
           spritesheet,
           quad,
           rnd,
-          new Vec2(cellX + cellMarginX * 0.5, cellY + cellMarginY * 0.5),
-          new Vec2(cellX + cellMarginX * 0.5, cellY + cellMarginY * 0.5),
+          row,
+          col,
         );
       }
     }
+
+    this.lastSwap.push(this.grid.cells[0][0]!);
+    this.lastSwap.push(this.grid.cells[0][0]!);
   }
 
   onPointerDown(pointerId: number, pos: Vec2) {
-    if (!this.isOnGrid(this.worldToGrid(pos))) return;
-    this.pointers.set(pointerId, pos);
+    let gridRC = this.worldToGrid(pos);
+    if (!this.isOnGrid(gridRC.row, gridRC.col)) return;
+    let gem = this.grid.cells[gridRC.row][gridRC.col]!;
+    if (!gem.anchored) return;
+    gem.select();
+    this.pointers.set(pointerId, gem);
   }
 
   onPointerUp(pointerId: number, pos: Vec2) {
-    const pointerStart = this.pointers.get(pointerId)!;
+    const releasedGem = this.pointers.get(pointerId);
+    if (!releasedGem) return;
     this.pointers.delete(pointerId);
-    const dragEnd = pos;
-    const startRC = this.worldToGrid(pointerStart);
-    const endRC = this.worldToGrid(dragEnd);
-    const startGem = this.grid.cells[startRC.row][startRC.col];
-    const endGem = this.grid.cells[endRC.row][endRC.col];
 
-    if (startGem === endGem) {
-      return;
-    }
-
-    let angleBetween = Math.atan2(
-      dragEnd.y - pointerStart.y,
-      dragEnd.x - pointerStart.x,
-    );
-    angleBetween = utils.radToDeg(angleBetween);
-    let swapOffset: { x: number; y: number };
-    if (angleBetween <= -45 && angleBetween >= -135) {
-      // up
-      swapOffset = { x: 0, y: -1 };
-    } else if (angleBetween >= 45 && angleBetween <= 135) {
-      // down
-      swapOffset = { x: 0, y: 1 };
-    } else if (angleBetween >= -45 && angleBetween <= 45) {
-      // right
-      swapOffset = { x: 1, y: 0 };
-    } else {
-      // left
-      swapOffset = { x: -1, y: 0 };
-    }
-    let swapGem =
-      this.grid.cells[startRC.row + swapOffset.y][startRC.col + swapOffset.x];
-    this.grid.cells[startRC.row][startRC.col] = swapGem;
-    this.grid.cells[startRC.row + swapOffset.y][startRC.col + swapOffset.x] =
-      startGem;
+    this.swap(releasedGem, pos);
   }
 
   update(dt: number) {
@@ -105,23 +80,92 @@ export default class Game {
     this.grid.draw(ctx);
   }
 
+  swap(gem: Gem, dragEnd: Vec2): SwapStatus {
+    let offset = Vec2.sub(globals.mousePos, gem.touchpoint);
+    let swapGem = this.getGemForSwap(gem, offset);
+    if (swapGem === null || !swapGem.anchored) {
+      gem.deselect();
+      return SwapStatus.NO_SWAP;
+    }
+    console.log(
+      `swap: ${gem.getRow()}, ${gem.getCol()} -> ${swapGem.getRow()}, ${swapGem.getCol()}`,
+    );
+
+    let tmpRow = gem.getRow();
+    let tmpCol = gem.getCol();
+    gem.setRow(swapGem.getRow());
+    gem.setCol(swapGem.getCol());
+    swapGem.setRow(tmpRow);
+    swapGem.setCol(tmpCol);
+    this.grid.cells[gem.getRow()][gem.getCol()] = gem;
+    this.grid.cells[swapGem.getRow()][swapGem.getCol()] = swapGem;
+
+    gem.deselect();
+    swapGem.snapToOrigin();
+    this.lastSwap[0] = gem;
+    this.lastSwap[1] = swapGem;
+
+    if (
+      this.makesMatch(gem.getRow(), gem.getCol()) ||
+      this.makesMatch(swapGem.getRow(), swapGem.getCol())
+    ) {
+      return SwapStatus.MATCH;
+    } else {
+      return SwapStatus.NO_MATCH;
+    }
+  }
+
+  getGemForSwap(gem: Gem, dragOffset: Vec2): Gem | null {
+    // didn't move enough to count
+    if (dragOffset.mag() < this.grid.getCellSize().x * this.swipeDistancePct) {
+      return null;
+    }
+
+    let absOffsetX = Math.abs(dragOffset.x);
+    let absOffsetY = Math.abs(dragOffset.y);
+    if (
+      Math.min(absOffsetX, absOffsetY) >
+      Math.max(absOffsetX, absOffsetY) * 0.5
+    ) {
+      // too diagonal
+      return null;
+    }
+
+    let row = gem.getRow();
+    let col = gem.getCol();
+    if (absOffsetX > absOffsetY) {
+      col += dragOffset.x > 0 ? 1 : -1;
+    } else {
+      row += dragOffset.y > 0 ? 1 : -1;
+    }
+    if (!this.isOnGrid(row, col)) return null;
+    return this.grid.cells[row][col];
+  }
+
+  makesMatch(row: number, col: number): boolean {
+    return false;
+  }
+
   worldToGrid(worldPos: Vec2): {
     row: number;
     col: number;
   } {
     let gridX = worldPos.x - this.grid.rect.x;
-    let col = Math.floor(gridX / this.grid.cellSize.x);
+    let col = Math.floor(gridX / this.grid.getCellSize().x);
     let gridY = worldPos.y - this.grid.rect.y;
-    let row = Math.floor(gridY / this.grid.cellSize.y);
+    let row = Math.floor(gridY / this.grid.getCellSize().y);
     return { row, col };
   }
 
-  isOnGrid(pos: { row: number; col: number }): boolean {
+  isOnGrid(row: number, col: number): boolean {
     return (
-      pos.row >= 0 &&
-      pos.row < this.grid.dim.y &&
-      pos.col >= 0 &&
-      pos.col < this.grid.dim.x
+      row >= 0 && row < this.grid.dim.y && col >= 0 && col < this.grid.dim.x
     );
   }
+}
+
+enum SwapStatus {
+  NO_SWAP,
+  MATCH,
+  NO_MATCH,
 }
