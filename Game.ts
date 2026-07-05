@@ -194,7 +194,7 @@ export default class Game {
       let matchCount = 0;
       for (let row = 0; row < this.rows; row++) {
         let curr = cells[row][col];
-        if (curr != null && curr.gemType === lastType && curr.anchored) {
+        if (curr !== null && curr.gemType === lastType && curr.anchored) {
           matchCount++;
           lastType = curr.gemType;
         } else {
@@ -251,6 +251,7 @@ export default class Game {
           gem.setCol(col);
           gem.pos = gem.origin;
           gem.pos.y -= offset * this.grid.getCellSize().y;
+          gem.drop();
           cells[row][col] = gem;
         }
       }

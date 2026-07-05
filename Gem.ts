@@ -27,7 +27,7 @@ export default class Gem implements GameObject {
   offsetFromMouse = new Vec2(0, 0);
   touchpoint = new Vec2(0, 0);
   velY = 0;
-  accY = 200;
+  accY = 2000;
   snapTime = 0.2;
 
   #row: number = 0;
@@ -83,7 +83,7 @@ export default class Gem implements GameObject {
       this.pos.y += this.velY * dt;
       this.velY += this.accY * dt;
       if (this.pos.y >= this.origin.y) {
-        console.log("landed");
+        console.log("landed", this.pos, this.origin);
         this.pos.y = this.origin.y;
         this.falling = false;
         this.anchored = true;
