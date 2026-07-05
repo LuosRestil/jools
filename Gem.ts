@@ -79,11 +79,9 @@ export default class Gem implements GameObject {
     }
 
     if (this.falling) {
-      console.log("falling");
       this.pos.y += this.velY * dt;
       this.velY += this.accY * dt;
       if (this.pos.y >= this.origin.y) {
-        console.log("landed", this.pos, this.origin);
         this.pos.y = this.origin.y;
         this.falling = false;
         this.anchored = true;

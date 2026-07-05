@@ -249,9 +249,10 @@ export default class Game {
           gem.quad = quad;
           gem.setRow(row);
           gem.setCol(col);
-          gem.pos = gem.origin;
+          gem.pos = gem.origin.copy();
           gem.pos.y -= offset * this.grid.getCellSize().y;
-          gem.drop();
+          gem.markedForDestroy = false; 
+          gem.drop(-this.bumpStrength);
           cells[row][col] = gem;
         }
       }
