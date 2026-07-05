@@ -27,7 +27,7 @@ export default class Gem implements GameObject {
   offsetFromMouse = new Vec2(0, 0);
   touchpoint = new Vec2(0, 0);
   velY = 0;
-  accY = 2000;
+  accY = 2500;
   snapTime = 0.2;
 
   #row: number = 0;
