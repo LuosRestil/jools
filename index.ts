@@ -45,7 +45,6 @@ document.oncontextmenu = (event) => {
 let lastFrameMs = 0;
 let frames = 0;
 let elapsed = 0;
-let fps = 0;
 
 function loop(ms: number) {
   requestAnimationFrame(loop);
@@ -58,7 +57,6 @@ function loop(ms: number) {
   elapsed += dts;
   if (elapsed > 1) {
     elapsed -= 1;
-    fps = frames;
     globals.debug = `fps: ${frames}`;
     frames = 0;
   }

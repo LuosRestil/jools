@@ -33,6 +33,7 @@ export default class Game {
       [key: string]: { frames: { frame: Rect } };
     } = JSON.parse(sprText);
     const spriteRects: Rect[] = spriteUtils.loadSpriteData(spriteMap.frames);
+    this.spriteRects = spriteRects;
 
     const spritesheet = new Image();
     spritesheet.src = "./assets/spritesheet.png";
@@ -216,40 +217,41 @@ export default class Game {
           cells[i][col]!.markedForDestroy = true;
         }
       }
+    }
 
-      // TODO scoring
+    // TODO scoring
 
-      let toReuse: Gem[] = [];
-      for (let col = 0; col < this.cols; col++) {
-        let offset = 0;
-        for (let row = this.rows - 1; row > -1; row--) {
-          let gem = cells[row][col];
-          if (gem === null) {
-            break;
-          }
-          if (gem.markedForDestroy) {
-            offset += 1;
-            toReuse.push(gem);
-            cells[row][col] = null;
-          } else if (offset > 0) {
-            cells[row][col] = null;
-            cells[row + offset][col] = gem;
-            gem.setRow(row + offset);
-            gem.drop(-this.bumpStrength);
-          }
+    let toReuse: Gem[] = [];
+    for (let col = 0; col < this.cols; col++) {
+      let offset = 0;
+      for (let row = this.rows - 1; row > -1; row--) {
+        let gem = cells[row][col];
+        if (gem === null) {
+          break;
         }
-        for (let row = this.rows - 1; row > -1; row--) {
-          if (cells[row][col] === null) {
-            let gem = toReuse.pop() as Gem;
-            let rnd = utils.randInt(0, this.spriteRects.length);
-            let quad = this.spriteRects[rnd];
-            gem.gemType = rnd;
-            gem.quad = quad;
-            gem.setRow(row);
-            gem.setCol(col);
-            gem.pos = gem.origin;
-            gem.pos.y -= offset * this.grid.cellSize.y;
-          }
+        if (gem.markedForDestroy) {
+          offset += 1;
+          toReuse.push(gem);
+          cells[row][col] = null;
+        } else if (offset > 0) {
+          cells[row][col] = null;
+          cells[row + offset][col] = gem;
+          gem.setRow(row + offset);
+          gem.drop(-this.bumpStrength);
+        }
+      }
+      for (let row = this.rows - 1; row > -1; row--) {
+        if (cells[row][col] === null) {
+          let gem = toReuse.pop() as Gem;
+          let rnd = utils.randInt(0, this.spriteRects.length);
+          let quad = this.spriteRects[rnd];
+          gem.gemType = rnd;
+          gem.quad = quad;
+          gem.setRow(row);
+          gem.setCol(col);
+          gem.pos = gem.origin;
+          gem.pos.y -= offset * this.grid.getCellSize().y;
+          cells[row][col] = gem;
         }
       }
     }
