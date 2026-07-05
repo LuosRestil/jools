@@ -5,17 +5,25 @@ import globals from "./globals.js";
 import Vec2 from "./Vec2.js";
 import utils from "./utils.js";
 import Rect from "./Rect.js";
+import Background from "./Background.js";
 
 export default class Game {
+  background = new Background();
   pointers: Map<number, Gem>;
   grid: Grid<Gem>;
+  rows = 8;
+  cols = 8;
 
   swipeDistancePct = 0.2;
   lastSwap: Gem[] = [];
 
+  bumpStrength = 200;
+
+  spriteRects: Rect[] = [];
+
   constructor() {
     this.pointers = new Map();
-    this.grid = new Grid(new Vec2(8, 8), new Vec2(32, 32));
+    this.grid = new Grid(new Vec2(this.cols, this.rows), new Vec2(32, 32));
   }
 
   async load() {
@@ -36,8 +44,8 @@ export default class Game {
     this.grid.rect.x = gridX;
     this.grid.rect.y = gridY;
 
-    for (let row = 0; row < this.grid.cells.length; row++) {
-      for (let col = 0; col < this.grid.cells[0].length; col++) {
+    for (let row = 0; row < this.rows; row++) {
+      for (let col = 0; col < this.cols; col++) {
         let rnd = utils.randInt(0, spriteRects.length);
         let quad = spriteRects[rnd];
         this.grid.cells[row][col] = new Gem(
@@ -74,10 +82,16 @@ export default class Game {
   }
 
   update(dt: number) {
+    this.background.update(dt);
     this.grid.update(dt);
+    let didMatch = this.makeMatches();
+    if (!didMatch && !this.gemsAreMoving()) {
+      // score stuff
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    this.background.draw(ctx);
     this.grid.draw(ctx);
   }
 
@@ -138,6 +152,113 @@ export default class Game {
     }
     if (!this.isOnGrid(row, col)) return null;
     return this.grid.cells[row][col];
+  }
+
+  makeMatches(): boolean {
+    let cells = this.grid.cells;
+    // horizontal
+    for (let row = 0; row < this.rows; row++) {
+      let lastType = -1;
+      let matchCount = 0;
+      for (let col = 0; col < this.cols; col++) {
+        let curr = cells[row][col];
+        if (curr != null && curr.gemType === lastType && curr.anchored) {
+          matchCount++;
+          lastType = curr.gemType;
+        } else {
+          if (matchCount >= 3) {
+            for (let i = col - 1; i > col - 1 - matchCount; i--) {
+              cells[row][i]!.markedForDestroy = true;
+            }
+          }
+          if (curr === null || !curr.anchored) {
+            lastType = -1;
+          } else {
+            lastType = curr.gemType;
+          }
+          matchCount = 1;
+        }
+      }
+      // catch streaks at end of rows
+      if (matchCount >= 3) {
+        for (let i = this.cols - 1; i > this.cols - 1 - matchCount; i--) {
+          cells[row][i]!.markedForDestroy = true;
+        }
+      }
+    }
+
+    // vertical
+    for (let col = 0; col < this.cols; col++) {
+      let lastType = -1;
+      let matchCount = 0;
+      for (let row = 0; row < this.rows; row++) {
+        let curr = cells[row][col];
+        if (curr != null && curr.gemType === lastType && curr.anchored) {
+          matchCount++;
+          lastType = curr.gemType;
+        } else {
+          if (matchCount >= 3) {
+            for (let i = row - 1; i > row - 1 - matchCount; i--) {
+              cells[i][col]!.markedForDestroy = true;
+            }
+          }
+          if (curr === null || !curr.anchored) {
+            lastType = -1;
+          } else {
+            lastType = curr.gemType;
+          }
+          matchCount = 1;
+        }
+      }
+      // catch streaks at end of rows
+      if (matchCount >= 3) {
+        for (let i = this.rows - 1; i > this.rows - 1 - matchCount; i--) {
+          cells[i][col]!.markedForDestroy = true;
+        }
+      }
+
+      // TODO scoring
+
+      let toReuse: Gem[] = [];
+      for (let col = 0; col < this.cols; col++) {
+        let offset = 0;
+        for (let row = this.rows - 1; row > -1; row--) {
+          let gem = cells[row][col];
+          if (gem === null) {
+            break;
+          }
+          if (gem.markedForDestroy) {
+            offset += 1;
+            toReuse.push(gem);
+            cells[row][col] = null;
+          } else if (offset > 0) {
+            cells[row][col] = null;
+            cells[row + offset][col] = gem;
+            gem.setRow(row + offset);
+            gem.drop(-this.bumpStrength);
+          }
+        }
+        for (let row = this.rows - 1; row > -1; row--) {
+          if (cells[row][col] === null) {
+            let gem = toReuse.pop() as Gem;
+            let rnd = utils.randInt(0, this.spriteRects.length);
+            let quad = this.spriteRects[rnd];
+            gem.gemType = rnd;
+            gem.quad = quad;
+            gem.setRow(row);
+            gem.setCol(col);
+            gem.pos = gem.origin;
+            gem.pos.y -= offset * this.grid.cellSize.y;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  gemsAreMoving(): boolean {
+    return false;
   }
 
   makesMatch(row: number, col: number): boolean {

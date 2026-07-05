@@ -90,18 +90,6 @@ export default class Gem implements GameObject {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    // ctx.drawImage(
-    //   this.img,
-    //   this.quad.x,
-    //   this.quad.y,
-    //   this.quad.w,
-    //   this.quad.h,
-    //   this.pos.x,
-    //   this.pos.y,
-    //   this.size.x,
-    //   this.size.y
-    // )
-
     ctx.save();
     ctx.translate(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2);
     ctx.rotate(this.rotation);
@@ -151,10 +139,10 @@ export default class Gem implements GameObject {
     this.snapToOrigin();
   }
 
-  drop(): void {
+  drop(startVel: number = 0): void {
     this.anchored = false;
     this.falling = true;
-    this.velY = 0;
+    this.velY = startVel;
   }
 
   snapToOrigin(): void {
