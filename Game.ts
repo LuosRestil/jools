@@ -261,7 +261,7 @@ export default class Game {
   }
 
   gemsAreMoving(): boolean {
-    return false;
+    return this.grid.cells.some(row => row.some(gem => !gem!.anchored));
   }
 
   makesMatch(row: number, col: number): boolean {
