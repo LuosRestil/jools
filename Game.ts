@@ -1,10 +1,10 @@
-import Grid from "./Grid.js";
+import Grid from "./lib/Grid.js";
 import Gem from "./Gem.js";
 import spriteUtils from "./sprites.js";
-import globals from "./globals.js";
-import Vec2 from "./Vec2.js";
-import utils from "./utils.js";
-import Rect from "./Rect.js";
+import globals from "./lib/globals.js";
+import Vec2 from "./lib/Vec2.js";
+import utils from "./lib/utils.js";
+import Rect from "./lib/Rect.js";
 import Background from "./Background.js";
 
 export default class Game {

@@ -1,10 +1,10 @@
-import Easings from "./Easings.js";
-import GameObject from "./GameObject.js";
-import globals from "./globals.js";
-import Grid from "./Grid.js";
-import Rect from "./Rect.js";
-import Tween from "./Tween.js";
-import Vec2 from "./Vec2.js";
+import Easings from "./lib/Easings.js";
+import GameObject from "./lib/GameObject.js";
+import globals from "./lib/globals.js";
+import Grid from "./lib/Grid.js";
+import Rect from "./lib/Rect.js";
+import Tween from "./lib/Tween.js";
+import Vec2 from "./lib/Vec2.js";
 
 export default class Gem implements GameObject {
   grid: Grid<Gem>;

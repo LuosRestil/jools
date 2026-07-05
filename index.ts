@@ -1,6 +1,6 @@
-import ScreenManager from "./ScreenManager.js";
-import Vec2 from "./Vec2.js";
-import globals from "./globals.js";
+import ScreenManager from "./lib/ScreenManager.js";
+import Vec2 from "./lib/Vec2.js";
+import globals from "./lib/globals.js";
 import Game from "./Game.js";
 
 const screenManager = new ScreenManager(globals.RESOLUTION.w, globals.RESOLUTION.h);

@@ -1,4 +1,4 @@
-import globals from "./globals.js";
+import globals from "./lib/globals.js";
 
 export default class Background {
   squareSize = 300;
