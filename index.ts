@@ -3,7 +3,10 @@ import Vec2 from "./lib/Vec2.js";
 import globals from "./lib/globals.js";
 import Game from "./Game.js";
 
-const screenManager = new ScreenManager(globals.RESOLUTION.w, globals.RESOLUTION.h);
+const screenManager = new ScreenManager(
+  globals.RESOLUTION.w,
+  globals.RESOLUTION.h,
+);
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;

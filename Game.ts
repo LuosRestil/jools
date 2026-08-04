@@ -20,6 +20,7 @@ export default class Game {
   bumpStrength = 200;
 
   spriteRects: Rect[] = [];
+  spritesheet?: HTMLImageElement;
 
   constructor() {
     this.pointers = new Map();
@@ -27,7 +28,7 @@ export default class Game {
   }
 
   async load() {
-    const sprRes = await fetch("./assets/spritesheet.json");
+    const sprRes = await fetch("./assets/spritesheet2.json");
     const sprText = await sprRes.text();
     const spriteMap: {
       [key: string]: { frames: { frame: Rect } };
@@ -35,11 +36,11 @@ export default class Game {
     const spriteRects: Rect[] = spriteUtils.loadSpriteData(spriteMap.frames);
     this.spriteRects = spriteRects;
 
-    const spritesheet = new Image();
-    spritesheet.src = "./assets/spritesheet.png";
-    await spritesheet.decode();
+    this.spritesheet = new Image();
+    this.spritesheet.src = "./assets/spritesheet2.png";
+    await this.spritesheet.decode();
 
-    this.grid.setCellSize(new Vec2(spriteRects[0].w * 1.3, spriteRects[0].h * 1.3));
+    this.grid.setCellSize(new Vec2(120, 120));
     const gridX = globals.RESOLUTION.w / 2 - this.grid.rect.w / 2;
     const gridY = globals.RESOLUTION.h / 2 - this.grid.rect.h / 2;
     this.grid.rect.x = gridX;
@@ -51,7 +52,7 @@ export default class Game {
         let quad = spriteRects[rnd];
         this.grid.cells[row][col] = new Gem(
           this.grid,
-          spritesheet,
+          this.spritesheet,
           quad,
           rnd,
           row,
@@ -93,7 +94,12 @@ export default class Game {
 
   draw(ctx: CanvasRenderingContext2D) {
     this.background.draw(ctx);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(this.grid.rect.x, this.grid.rect.y, this.grid.rect.w, this.grid.rect.h);
+    ctx.clip();
     this.grid.draw(ctx);
+    ctx.restore();
   }
 
   swap(gem: Gem): SwapStatus {
