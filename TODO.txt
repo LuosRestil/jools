@@ -1,2 +1,0 @@
-- check board for matches
-- only swap gems if the swap makes a match
